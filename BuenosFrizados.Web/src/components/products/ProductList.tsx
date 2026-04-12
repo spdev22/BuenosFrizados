@@ -1,0 +1,23 @@
+import type { Product } from '../../types'
+import ProductCard from './ProductCard'
+
+interface ProductListProps {
+    products: Product[]
+    onAdd: (product: Product) => void
+}
+
+export default function ProductList({ products, onAdd }: ProductListProps) {
+    if (products.length === 0) {
+        return (
+            <p className="text-center text-gray-400 py-12">No products available</p>
+        )
+    }
+
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {products.map(product => (
+                <ProductCard key={product.id} product={product} onAdd={onAdd} />
+            ))}
+        </div>
+    )
+}
