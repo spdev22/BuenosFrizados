@@ -8,6 +8,6 @@ namespace BuenosFrizados.Domain.Entities;
         public int Stock { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
-        public bool IsActive { get; set; }
+        public bool isActive { get; set; } = true;
     }
 

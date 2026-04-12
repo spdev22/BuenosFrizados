@@ -26,3 +26,11 @@ public class OrderItem
     public Order Order { get; set; }
     public Product Product { get; set; }
 }
+
+public enum OrderStatus
+{
+    Pending,
+    Confirmed,
+    Delivered,
+    Cancelled
+}

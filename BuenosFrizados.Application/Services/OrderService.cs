@@ -1,5 +1,5 @@
 using BuenosFrizados.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+using BuenosFrizados.Infrastructure.Repositories;
 
 namespace BuenosFrizados.Application.Services;
 
@@ -22,7 +22,6 @@ public class OrderService
     {
         return await _repository.GetByIdAsync(id);
     }
-
 
     public async Task<Order> CreateOrderAsync(Order order)
     {

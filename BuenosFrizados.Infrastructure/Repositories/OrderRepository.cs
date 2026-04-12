@@ -23,7 +23,7 @@ public class OrderRepository
         return await _context.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.Id == id);
     }
 
-    public async Task CreateAsync(Order order)
+    public async Task<Order> CreateAsync(Order order)
     {
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();

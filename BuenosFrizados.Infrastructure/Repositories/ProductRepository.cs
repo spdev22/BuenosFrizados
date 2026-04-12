@@ -23,7 +23,7 @@ public class ProductRepository
         return await _context.Products.FindAsync(id);
     }
 
-    public async Task CreateAsync(Product product)
+    public async Task<Product> CreateAsync(Product product)
     {
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
