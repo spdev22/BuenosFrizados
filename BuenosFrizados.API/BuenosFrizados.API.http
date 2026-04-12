@@ -1,0 +1,6 @@
+@BuenosFrizados.API_HostAddress = http://localhost:5216
+
+GET {{BuenosFrizados.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
