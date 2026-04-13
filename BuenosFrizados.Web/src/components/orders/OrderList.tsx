@@ -4,15 +4,17 @@ interface OrderListProps {
     orders: Order[]
     onConfirm: (id: number) => void
     onDeliver: (id: number) => void
+    onCancel: (id: number) => void
 }
 
 const statusStyles: Record<string, string> = {
-    pending: 'bg-amber-100 text-amber-800',
-    confirmed: 'bg-teal-100 text-teal-800',
-    delivered: 'bg-green-100 text-green-800',
+    Pending: 'bg-amber-100 text-amber-800',
+    Confirmed: 'bg-teal-100 text-teal-800',
+    Delivered: 'bg-green-100 text-green-800',
+    Cancelled: 'bg-red-100 text-red-800',
 }
 
-export default function OrderList({ orders, onConfirm, onDeliver }: OrderListProps) {
+export default function OrderList({ orders, onConfirm, onDeliver, onCancel }: OrderListProps) {
     if (orders.length === 0) {
         return (
             <p className="text-center text-gray-400 py-12">No orders yet</p>
@@ -25,12 +27,9 @@ export default function OrderList({ orders, onConfirm, onDeliver }: OrderListPro
                 <div key={order.id} className="bg-white border border-gray-200 rounded-xl p-4">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="font-medium text-gray-900">{order.customerName}</p>
-                            <p className="text-sm text-gray-500 mt-1">{order.address}</p>
-                            <p className="text-xs text-gray-400 mt-1">
-                                {order.deliveryDate} · {order.deliveryTime}
-                            </p>
-                            <p className="text-xs text-gray-400">{order.paymentMethod}</p>
+                            <p className="font-medium text-gray-900">Client #{order.clientId}</p>
+                            <p className="text-sm text-gray-500 mt-1">{order.clientPhoneNumber}</p>
+                            <p className="text-xs text-gray-400 mt-1">{order.orderDate}</p>
                         </div>
                         <div className="flex flex-col items-end gap-2">
                             <span className="font-medium text-gray-900">
@@ -49,15 +48,23 @@ export default function OrderList({ orders, onConfirm, onDeliver }: OrderListPro
                         ))}
                     </div>
                     <div className="flex gap-2 mt-3">
-                        {order.status === 'pending' && (
-                            <button
-                                onClick={() => onConfirm(order.id)}
-                                className="px-3 py-1.5 border border-teal-600 text-teal-600 text-xs rounded-lg hover:bg-teal-50 transition-colors"
-                            >
-                                Confirm
-                            </button>
+                        {order.status === 'Pending' && (
+                            <>
+                                <button
+                                    onClick={() => onConfirm(order.id)}
+                                    className="px-3 py-1.5 border border-teal-600 text-teal-600 text-xs rounded-lg hover:bg-teal-50 transition-colors"
+                                >
+                                    Confirm
+                                </button>
+                                <button
+                                    onClick={() => onCancel(order.id)}
+                                    className="px-3 py-1.5 border border-red-400 text-red-400 text-xs rounded-lg hover:bg-red-50 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                            </>
                         )}
-                        {order.status === 'confirmed' && (
+                        {order.status === 'Confirmed' && (
                             <button
                                 onClick={() => onDeliver(order.id)}
                                 className="px-3 py-1.5 border border-green-600 text-green-600 text-xs rounded-lg hover:bg-green-50 transition-colors"

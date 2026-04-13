@@ -8,7 +8,11 @@ interface ProductCardProps {
 export default function ProductCard({ product, onAdd }: ProductCardProps) {
     return (
         <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
-            <div className="text-4xl text-center">{product.emoji}</div>
+            <img
+                src={product.imageUrl}
+                alt={product.name}
+                className="w-full h-36 object-cover rounded-lg"
+            />
             <div>
                 <p className="font-medium text-gray-900">{product.name}</p>
                 <p className="text-sm text-gray-500 mt-1">{product.description}</p>

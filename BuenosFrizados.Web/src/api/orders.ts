@@ -17,9 +17,13 @@ export const createOrder = async (order: CreateOrderRequest): Promise<Order> => 
 }
 
 export const confirmOrder = async (id: number): Promise<void> => {
-    await client.patch(`/api/orders/${id}/confirm`)
+    await client.post(`/api/orders/${id}/confirm`)
 }
 
 export const deliverOrder = async (id: number): Promise<void> => {
-    await client.patch(`/api/orders/${id}/deliver`)
+    await client.post(`/api/orders/${id}/deliver`)
+}
+
+export const cancelOrder = async (id: number): Promise<void> => {
+    await client.post(`/api/orders/${id}/cancel`)
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Order } from '../types'
-import { getOrders, confirmOrder, deliverOrder } from '../api/orders'
+import { getOrders, confirmOrder, deliverOrder, cancelOrder } from '../api/orders'
 import OrderList from '../components/orders/OrderList'
 
 export default function AdminPage() {
@@ -15,12 +15,17 @@ export default function AdminPage() {
 
     const handleConfirm = async (id: number) => {
         await confirmOrder(id)
-        setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'confirmed' } : o))
+        setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'Confirmed' } : o))
     }
 
     const handleDeliver = async (id: number) => {
         await deliverOrder(id)
-        setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'delivered' } : o))
+        setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'Delivered' } : o))
+    }
+
+    const handleCancel = async (id: number) => {
+        await cancelOrder(id)
+        setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'Cancelled' } : o))
     }
 
     if (loading) {
@@ -30,7 +35,12 @@ export default function AdminPage() {
     return (
         <div>
             <h1 className="text-xl font-medium text-gray-900 mb-6">Orders</h1>
-            <OrderList orders={orders} onConfirm={handleConfirm} onDeliver={handleDeliver} />
+            <OrderList
+                orders={orders}
+                onConfirm={handleConfirm}
+                onDeliver={handleDeliver}
+                onCancel={handleCancel}
+            />
         </div>
     )
 }
