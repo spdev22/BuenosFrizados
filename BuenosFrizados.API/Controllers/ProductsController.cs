@@ -19,20 +19,44 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var products = await _service.GetAllProductsAsync();
-        return Ok(products);
+        var response = products.Select(p => new ProductResponse
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            Price = p.Price,
+            ImageUrl = p.ImageUrl,
+            IsActive = p.IsActive
+        });
+        return Ok(response);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(Product product)
+    public async Task<IActionResult> Create(CreateProductRequest request)
     {
+        var product = new Product
+        {
+            Name = request.Name,
+            Description = request.Description,
+            Price = request.Price,
+            ImageUrl = request.ImageUrl
+        };
         var created = await _service.CreateProductAsync(product);
         return CreatedAtAction(nameof(GetAll), new { id = created.Id }, created);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, Product product)
+    public async Task<IActionResult> Update(int id, UpdateProductRequest request)
     {
-        product.Id = id;
+        var product = new Product
+        {
+            Id = id,
+            Name = request.Name,
+            Description = request.Description,
+            Price = request.Price,
+            ImageUrl = request.ImageUrl,
+            IsActive = request.IsActive
+        };
         await _service.UpdateProductAsync(product);
         return NoContent();
     }

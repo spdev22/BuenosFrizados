@@ -15,7 +15,7 @@ public class ProductRepository
 
     public async Task<List<Product>> GetAllAsync()
     {
-        return await _context.Products.Where(product => product.isActive).ToListAsync();
+        return await _context.Products.Where(product => product.IsActive).ToListAsync();
     }
 
     public async Task<Product> GetByIdAsync(int id)
