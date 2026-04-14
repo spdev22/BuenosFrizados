@@ -6,9 +6,10 @@ interface OrderFormProps {
     items: OrderItem[]
     onRemove: (productId: number) => void
     onSubmit: (order: CreateOrderRequest) => void
+    onError: (message: string) => void
 }
 
-export default function OrderForm({ items, onRemove, onSubmit }: OrderFormProps) {
+export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderFormProps) {
     const [clientId, setClientId] = useState('')
     const [clientPhoneNumber, setClientPhoneNumber] = useState('')
 
@@ -16,7 +17,7 @@ export default function OrderForm({ items, onRemove, onSubmit }: OrderFormProps)
 
     const handleSubmit = () => {
         if (!clientId || !clientPhoneNumber) {
-            alert('Please fill in all fields')
+            onError('Please fill in all fields')
             return
         }
         onSubmit({
