@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import type { CreateOrderRequest, OrderItem } from '../types'
 import { createOrder } from '../api/orders'
 import OrderForm from '../components/orders/OrderForm'
@@ -6,17 +7,19 @@ import OrderForm from '../components/orders/OrderForm'
 interface CheckoutPageProps {
     items: OrderItem[]
     onRemove: (productId: number) => void
-    onSuccess: () => void
+    onClearCart: () => void
 }
 
-export default function CheckoutPage({ items, onRemove, onSuccess }: CheckoutPageProps) {
+export default function CheckoutPage({ items, onRemove, onClearCart }: CheckoutPageProps) {
     const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
 
     const handleSubmit = async (order: CreateOrderRequest) => {
         setLoading(true)
         try {
             await createOrder(order)
-            onSuccess()
+            onClearCart()
+            navigate('/menu')
         } catch (error) {
             alert('Something went wrong. Please try again.')
         } finally {

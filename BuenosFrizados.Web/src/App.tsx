@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import type { Product, OrderItem } from './types'
 import Navbar from './components/shared/Navbar'
 import MenuPage from './pages/MenuPage'
@@ -6,7 +7,6 @@ import CheckoutPage from './pages/CheckoutPage'
 import AdminPage from './pages/AdminPage'
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('menu')
   const [cartItems, setCartItems] = useState<OrderItem[]>([])
 
   const handleAdd = (product: Product) => {
@@ -32,35 +32,27 @@ export default function App() {
     setCartItems(prev => prev.filter(i => i.productId !== productId))
   }
 
-  const handleSuccess = () => {
-    setCartItems([])
-    setCurrentPage('menu')
-  }
-
   const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0)
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar
-        currentPage={currentPage}
-        onNavigate={setCurrentPage}
-        cartCount={cartCount}
-      />
-      <main className="max-w-4xl mx-auto px-6 py-8">
-        {currentPage === 'menu' && (
-          <MenuPage onAdd={handleAdd} />
-        )}
-        {currentPage === 'checkout' && (
-          <CheckoutPage
-            items={cartItems}
-            onRemove={handleRemove}
-            onSuccess={handleSuccess}
-          />
-        )}
-        {currentPage === 'admin' && (
-          <AdminPage />
-        )}
-      </main>
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen bg-[#f4f7fb]">
+        <Navbar cartCount={cartCount} />
+        <main className="max-w-4xl mx-auto px-6 py-8">
+          <Routes>
+            <Route path="/" element={<Navigate to="/menu" replace />} />
+            <Route path="/menu" element={<MenuPage onAdd={handleAdd} />} />
+            <Route path="/order" element={
+              <CheckoutPage
+                items={cartItems}
+                onRemove={handleRemove}
+                onClearCart={() => setCartItems([])}
+              />
+            } />
+            <Route path="/admin" element={<AdminPage />} />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
   )
 }

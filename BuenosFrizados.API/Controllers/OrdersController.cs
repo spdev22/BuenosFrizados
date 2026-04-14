@@ -79,7 +79,22 @@ public class OrdersController : ControllerBase
             }).ToList()
         };
         var created = await _service.CreateOrderAsync(order);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, new OrderResponse
+        {
+            Id = created.Id,
+            ClientId = created.ClientId,
+            ClientPhoneNumber = created.ClientPhoneNumber,
+            OrderDate = created.OrderDate,
+            Total = created.Total,
+            Status = created.Status.ToString(),
+            Items = created.Items.Select(i => new OrderItemResponse
+            {
+                ProductId = i.ProductId,
+                ProductName = i.ProductName,
+                Quantity = i.Quantity,
+                UnitPrice = i.UnitPrice
+            }).ToList()
+        });
     }
 
     [HttpPost("{id}/confirm")]

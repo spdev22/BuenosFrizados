@@ -24,7 +24,7 @@ export default function OrderList({ orders, onConfirm, onDeliver, onCancel }: Or
     return (
         <div className="flex flex-col gap-4">
             {orders.map(order => (
-                <div key={order.id} className="bg-white border border-gray-200 rounded-xl p-4">
+                <div key={order.id} className="bg-white border border-[#dce8f5] rounded-xl p-4">
                     <div className="flex items-start justify-between">
                         <div>
                             <p className="font-medium text-gray-900">Client #{order.clientId}</p>
@@ -52,7 +52,7 @@ export default function OrderList({ orders, onConfirm, onDeliver, onCancel }: Or
                             <>
                                 <button
                                     onClick={() => onConfirm(order.id)}
-                                    className="px-3 py-1.5 border border-teal-600 text-teal-600 text-xs rounded-lg hover:bg-teal-50 transition-colors"
+                                    className="px-3 py-1.5 border border-teal-600 text-[#185FA5] text-xs rounded-lg hover:bg-teal-50 transition-colors"
                                 >
                                     Confirm
                                 </button>
