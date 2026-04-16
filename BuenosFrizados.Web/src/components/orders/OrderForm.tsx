@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { CreateOrderRequest, OrderItem } from '../../types'
 import OrderItemComponent from './OrderItem'
+import FieldError from '../shared/FieldError'
+import { useFormValidation } from '../../hooks/useFormValidation'
 
 interface OrderFormProps {
     items: OrderItem[]
@@ -13,13 +15,19 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
     const [clientId, setClientId] = useState('')
     const [clientPhoneNumber, setClientPhoneNumber] = useState('')
 
+    const { errors, validate, clearError } = useFormValidation<{
+        clientId: string
+        clientPhoneNumber: string
+    }>({
+        clientId: (v) => !v || Number(v) <= 0 ? 'Client ID is required' : null,
+        clientPhoneNumber: (v) => !v ? 'Phone number is required' : v.length < 8 ? 'Phone number is too short' : null,
+    })
+
     const total = items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0)
 
     const handleSubmit = () => {
-        if (!clientId || !clientPhoneNumber) {
-            onError('Please fill in all fields')
-            return
-        }
+        const valid = validate({ clientId, clientPhoneNumber })
+        if (!valid) return
         onSubmit({
             clientId: Number(clientId),
             clientPhoneNumber,
@@ -41,7 +49,7 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white border border-[#dce8f5] rounded-xl p-5">
-                <p className="font-medium text-gray-900 mb-4">Your order</p>
+                <p className="font-medium text-[#0c1a2e] mb-4">Your order</p>
                 {items.map(item => (
                     <OrderItemComponent key={item.productId} item={item} onRemove={onRemove} />
                 ))}
@@ -51,21 +59,29 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
                 </div>
             </div>
 
-            <div className="bg-white border border-[#dce8f5] rounded-xl p-5 flex flex-col gap-4">
-                <p className="font-medium text-gray-900">Client details</p>
-                <input
-                    className="border border-[#dce8f5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
-                    placeholder="Client ID"
-                    type="number"
-                    value={clientId}
-                    onChange={e => setClientId(e.target.value)}
-                />
-                <input
-                    className="border border-[#dce8f5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-teal-500"
-                    placeholder="Phone number"
-                    value={clientPhoneNumber}
-                    onChange={e => setClientPhoneNumber(e.target.value)}
-                />
+            <div className="bg-white border border-[#dce8f5] rounded-xl p-5 flex flex-col gap-3">
+                <p className="font-medium text-[#0c1a2e]">Client details</p>
+                <div>
+                    <input
+                        className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#378ADD] ${errors.clientId ? 'border-red-400' : 'border-[#dce8f5]'
+                            }`}
+                        placeholder="Client ID"
+                        type="number"
+                        value={clientId}
+                        onChange={e => { setClientId(e.target.value); clearError('clientId') }}
+                    />
+                    <FieldError message={errors.clientId} />
+                </div>
+                <div>
+                    <input
+                        className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#378ADD] ${errors.clientPhoneNumber ? 'border-red-400' : 'border-[#dce8f5]'
+                            }`}
+                        placeholder="Phone number"
+                        value={clientPhoneNumber}
+                        onChange={e => { setClientPhoneNumber(e.target.value); clearError('clientPhoneNumber') }}
+                    />
+                    <FieldError message={errors.clientPhoneNumber} />
+                </div>
                 <button
                     onClick={handleSubmit}
                     className="mt-auto w-full py-2.5 bg-[#378ADD] text-white rounded-lg text-sm font-medium hover:bg-[#185FA5] transition-colors"

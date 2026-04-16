@@ -1,15 +1,15 @@
-# TODO
+TODO:
 
 ## Frontend
-- [ ] Validación inline en formularios (mensajes debajo de cada campo)
-- [ ] CRUD de productos en Admin
+- [x] CRUD de productos en Admin
+- [ ] Validación inline en formularios
 - [ ] Logo
 - [ ] Más personalidad en los componentes
 
 ## Backend
 - [ ] Interfaces IProductRepository y IOrderRepository en Domain
-- [ ] DTOs en controllers de products (igual que orders)
+- [ ] Validaciones en ProductsController
 
 ## General
-- [ ] Autenticación para la sección Admin
+- [ ] Autenticación para Admin
 - [ ] Deploy
