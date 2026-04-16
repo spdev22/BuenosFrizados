@@ -12,37 +12,37 @@ export default function ProductAdminList({ products, onEdit, onToggle }: Product
     }
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
             {products.map(product => (
-                <div key={product.id} className="bg-white border border-[#dce8f5] rounded-xl p-4 flex items-center gap-4">
+                <div key={product.id} className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-2xl p-5 flex items-center gap-4 shadow-xl">
                     <img
                         src={product.imageUrl}
                         alt={product.name}
-                        className="w-14 h-14 object-cover rounded-lg"
+                        className="w-16 h-16 object-cover rounded-xl border border-[#2a2a2a]/50"
                     />
                     <div className="flex-1">
-                        <p className="font-medium text-[#0c1a2e] text-sm">{product.name}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{product.description}</p>
-                        <p className="text-sm font-medium text-[#185FA5] mt-1">${product.price.toLocaleString('es-AR')}</p>
+                        <p className="font-semibold text-white text-sm">{product.name}</p>
+                        <p className="text-xs text-gray-400 mt-1">{product.description}</p>
+                        <p className="text-sm font-semibold text-[#FF6B00] mt-2">${product.price.toLocaleString('es-AR')}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${product.isActive
-                                ? 'bg-[#e6f1fb] text-[#0C447C]'
-                                : 'bg-gray-100 text-gray-500'
+                    <div className="flex items-center gap-3">
+                        <span className={`text-xs px-3 py-1.5 rounded-xl font-medium border ${product.isActive
+                                ? 'bg-green-900/30 text-green-400 border-green-800/50'
+                                : 'bg-gray-800/50 text-gray-500 border-gray-700/50'
                             }`}>
                             {product.isActive ? 'Active' : 'Inactive'}
                         </span>
                         <button
                             onClick={() => onEdit(product)}
-                            className="px-3 py-1.5 border border-[#dce8f5] text-[#0c1a2e] text-xs rounded-lg hover:bg-[#f4f7fb] transition-colors"
+                            className="px-4 py-2 border-2 border-[#2a2a2a] text-gray-300 text-xs rounded-xl hover:bg-[#2a2a2a]/30 hover:text-white transition-all duration-200"
                         >
                             Edit
                         </button>
                         <button
                             onClick={() => onToggle(product)}
-                            className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${product.isActive
-                                    ? 'border-red-200 text-red-500 hover:bg-red-50'
-                                    : 'border-[#dce8f5] text-[#185FA5] hover:bg-[#e6f1fb]'
+                            className={`px-4 py-2 text-xs rounded-xl border-2 transition-all duration-200 ${product.isActive
+                                    ? 'border-red-800/50 text-red-400 hover:bg-red-900/30 hover:border-red-700'
+                                    : 'border-[#FF6B00]/50 text-[#FF6B00] hover:bg-[#FF6B00]/10 hover:border-[#FF6B00]'
                                 }`}
                         >
                             {product.isActive ? 'Deactivate' : 'Activate'}

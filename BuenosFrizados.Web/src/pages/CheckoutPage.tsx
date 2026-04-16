@@ -33,9 +33,18 @@ export default function CheckoutPage({ items, onRemove, onClearCart }: CheckoutP
 
     return (
         <div>
-            <h1 className="text-xl font-medium text-[#0c1a2e] mb-6">Your order</h1>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+                    <span className="w-1 h-10 bg-gradient-to-b from-[#FF6B00] to-[#FF8533] rounded-full"></span>
+                    Your order
+                </h1>
+                <p className="text-gray-400 mt-2 ml-7">Review your items and complete your order</p>
+            </div>
             {loading
-                ? <p className="text-center text-gray-400 py-12">Placing your order...</p>
+                ? <div className="text-center py-16">
+                    <div className="inline-block w-8 h-8 border-4 border-[#FF6B00] border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-gray-400 mt-4">Placing your order...</p>
+                  </div>
                 : <OrderForm items={items} onRemove={onRemove} onSubmit={handleSubmit} onError={(message) => showToast(message, 'error')}
                 />
             }

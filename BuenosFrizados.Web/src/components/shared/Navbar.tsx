@@ -7,30 +7,36 @@ interface NavbarProps {
 export default function Navbar({ cartCount }: NavbarProps) {
     const navigate = useNavigate()
     const location = useLocation()
-
     const isActive = (path: string) => location.pathname === path
 
     return (
-        <nav className="bg-white border-b border-[#dce8f5] px-6 py-4 flex items-center justify-between">
-            <span className="text-lg font-medium text-gray-900">Buenos Frizados</span>
+        <nav className="bg-[#1a1a1a] border-b border-[#2a2a2a] px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+                <div className="w-1 h-10 bg-[#FF6B00] rounded-full" />
+                <div>
+                    <p className="text-white font-bold text-lg tracking-wide leading-none">BUENOS</p>
+                    <p className="text-[#FF6B00] font-light text-sm tracking-[0.3em] leading-none mt-0.5">FRIZADOS</p>
+                    <p className="text-[#444] text-[9px] tracking-[0.15em] mt-1"> FRIZADOS ARTESANALES </p>
+                </div>
+            </div>
             <div className="flex gap-2">
                 <button
                     onClick={() => navigate('/menu')}
-                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/menu') ? 'bg-[#378ADD] text-white' : 'text-gray-600 hover:bg-gray-100'
+                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/menu') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
                         }`}
                 >
                     Menu
                 </button>
                 <button
                     onClick={() => navigate('/order')}
-                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/order') ? 'bg-[#378ADD] text-white' : 'text-gray-600 hover:bg-gray-100'
+                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/order') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
                         }`}
                 >
                     Order {cartCount > 0 && `(${cartCount})`}
                 </button>
                 <button
                     onClick={() => navigate('/admin')}
-                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/admin') ? 'bg-[#378ADD] text-white' : 'text-gray-600 hover:bg-gray-100'
+                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/admin') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
                         }`}
                 >
                     Admin

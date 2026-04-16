@@ -23,7 +23,8 @@ export default function App() {
         productId: product.id,
         productName: product.name,
         quantity: 1,
-        unitPrice: product.price
+        unitPrice: product.price,
+        imageUrl: product.imageUrl
       }]
     })
   }
@@ -36,9 +37,9 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#f4f7fb]">
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#1a1a1a] to-[#0f0f0f]">
         <Navbar cartCount={cartCount} />
-        <main className="max-w-4xl mx-auto px-6 py-8">
+        <main className="max-w-5xl mx-auto px-6 py-8">
           <Routes>
             <Route path="/" element={<Navigate to="/menu" replace />} />
             <Route path="/menu" element={<MenuPage onAdd={handleAdd} />} />

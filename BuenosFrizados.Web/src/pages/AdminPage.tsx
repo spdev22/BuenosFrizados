@@ -91,23 +91,36 @@ export default function AdminPage() {
     }
 
     if (loading) {
-        return <p className="text-center text-gray-400 py-12">Loading...</p>
+        return (
+            <div className="text-center py-16">
+                <div className="inline-block w-8 h-8 border-4 border-[#FF6B00] border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-400 mt-4">Loading admin panel...</p>
+            </div>
+        )
     }
 
     return (
         <div>
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex gap-2">
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+                    <span className="w-1 h-10 bg-gradient-to-b from-[#FF6B00] to-[#FF8533] rounded-full"></span>
+                    Admin Panel
+                </h1>
+                <p className="text-gray-400 mt-2 ml-7">Manage orders and products</p>
+            </div>
+            
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex gap-1 bg-[#1a1a1a]/80 backdrop-blur-sm rounded-2xl p-1 border border-[#2a2a2a]/60 shadow-xl">
                     <button
                         onClick={() => setActiveTab('orders')}
-                        className={`px-4 py-2 rounded-lg text-sm transition-colors ${activeTab === 'orders' ? 'bg-[#0c1a2e] text-white' : 'text-gray-500 hover:bg-[#f4f7fb]'
+                        className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'orders' ? 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white shadow-md' : 'text-gray-400 hover:text-white'
                             }`}
                     >
                         Orders
                     </button>
                     <button
                         onClick={() => setActiveTab('products')}
-                        className={`px-4 py-2 rounded-lg text-sm transition-colors ${activeTab === 'products' ? 'bg-[#0c1a2e] text-white' : 'text-gray-500 hover:bg-[#f4f7fb]'
+                        className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'products' ? 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white shadow-md' : 'text-gray-400 hover:text-white'
                             }`}
                     >
                         Products
@@ -116,7 +129,7 @@ export default function AdminPage() {
                 {activeTab === 'products' && !showForm && !editingProduct && (
                     <button
                         onClick={() => setShowForm(true)}
-                        className="px-4 py-2 bg-[#378ADD] text-white rounded-lg text-sm font-medium hover:bg-[#185FA5] transition-colors"
+                        className="px-5 py-2.5 bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white rounded-xl text-sm font-semibold hover:from-[#FF5500] hover:to-[#FF6B00] transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
                         + New product
                     </button>

@@ -47,23 +47,29 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
     }
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white border border-[#dce8f5] rounded-xl p-5">
-                <p className="font-medium text-[#0c1a2e] mb-4">Your order</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-2xl p-6 shadow-xl">
+                <h2 className="font-semibold text-white text-xl mb-5 flex items-center gap-2">
+                    <span className="w-2 h-8 bg-gradient-to-b from-[#FF6B00] to-[#FF8533] rounded-full"></span>
+                    Your order
+                </h2>
                 {items.map(item => (
                     <OrderItemComponent key={item.productId} item={item} onRemove={onRemove} />
                 ))}
-                <div className="flex justify-between pt-4 mt-2 border-t border-[#dce8f5] font-medium">
-                    <span>Total</span>
-                    <span className="text-[#185FA5]">${total.toLocaleString('es-AR')}</span>
+                <div className="flex justify-between pt-4 mt-4 border-t border-[#2a2a2a] font-semibold text-lg">
+                    <span className="text-gray-300">Total</span>
+                    <span className="text-[#FF6B00]">${total.toLocaleString('es-AR')}</span>
                 </div>
             </div>
 
-            <div className="bg-white border border-[#dce8f5] rounded-xl p-5 flex flex-col gap-3">
-                <p className="font-medium text-[#0c1a2e]">Client details</p>
+            <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-2xl p-6 flex flex-col gap-4 shadow-xl">
+                <h2 className="font-semibold text-white text-xl flex items-center gap-2">
+                    <span className="w-2 h-8 bg-gradient-to-b from-[#FF6B00] to-[#FF8533] rounded-full"></span>
+                    Client details
+                </h2>
                 <div>
                     <input
-                        className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#378ADD] ${errors.clientId ? 'border-red-400' : 'border-[#dce8f5]'
+                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm bg-[#0f0f0f]/70 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] transition-colors ${errors.clientId ? 'border-red-400' : 'border-[#2a2a2a]'
                             }`}
                         placeholder="Client ID"
                         type="number"
@@ -74,7 +80,7 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
                 </div>
                 <div>
                     <input
-                        className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#378ADD] ${errors.clientPhoneNumber ? 'border-red-400' : 'border-[#dce8f5]'
+                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm bg-[#0f0f0f]/70 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] transition-colors ${errors.clientPhoneNumber ? 'border-red-400' : 'border-[#2a2a2a]'
                             }`}
                         placeholder="Phone number"
                         value={clientPhoneNumber}
@@ -84,7 +90,7 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
                 </div>
                 <button
                     onClick={handleSubmit}
-                    className="mt-auto w-full py-2.5 bg-[#378ADD] text-white rounded-lg text-sm font-medium hover:bg-[#185FA5] transition-colors"
+                    className="mt-auto w-full py-3.5 bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white rounded-xl text-sm font-semibold hover:from-[#FF5500] hover:to-[#FF6B00] transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                     Confirm order
                 </button>
