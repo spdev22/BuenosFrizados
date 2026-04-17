@@ -3,80 +3,62 @@ import type { Product } from '../../types'
 
 interface ProductCardProps {
     product: Product
+    cartItems: Array<{productId: number, quantity: number}>
     onAdd: (product: Product, quantity?: number) => void
 }
 
-export default function ProductCard({ product, onAdd }: ProductCardProps) {
+export default function ProductCard({ product, cartItems, onAdd }: ProductCardProps) {
     const [isAdded, setIsAdded] = useState(false)
-    const [quantity, setQuantity] = useState(1)
+    
+    const currentQuantity = cartItems.find(item => item.productId === product.id)?.quantity || 0
 
     const handleAdd = () => {
-        onAdd(product, quantity)
+        onAdd(product, 1)
         setIsAdded(true)
         setTimeout(() => setIsAdded(false), 1500) // Reset after 1.5 seconds
     }
 
-    const decreaseQuantity = () => {
-        if (quantity > 1) setQuantity(quantity - 1)
-    }
-
-    const increaseQuantity = () => {
-        setQuantity(quantity + 1)
-    }
-
     return (
-        <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-2xl p-5 flex flex-col gap-4 shadow-xl hover:shadow-2xl hover:shadow-[#FF6B00]/25 transition-all duration-300 hover:-translate-y-1">
-            <div className="relative overflow-hidden rounded-xl">
+        <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-[#FF6B00]/25 transition-all duration-300 hover:-translate-y-2">
+            <div className="relative overflow-hidden">
                 <img
                     src={product.imageUrl}
                     alt={product.name}
-                    className="w-full h-40 object-cover transition-transform duration-300 hover:scale-105"
+                    className="w-full h-48 object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
                 {isAdded && (
                     <div className="absolute inset-0 bg-[#FF6B35]/20 backdrop-blur-sm flex items-center justify-center">
                         <div className="bg-[#FF6B35]/90 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
-                            ¡✓ Agregado!
+                            ✓ Agregado ({currentQuantity + 1})
                         </div>
                     </div>
                 )}
             </div>
-            <div className="space-y-2">
-                <h3 className="font-semibold text-white text-lg">{product.name}</h3>
-                <p className="text-sm text-gray-400 leading-relaxed">{product.description}</p>
-            </div>
-            <div className="flex flex-col gap-3 mt-auto pt-2">
-                <div className="flex items-center justify-between">
-                    <span className="font-bold text-xl text-[#FF6B00]">
+            <div className="p-6 flex flex-col flex-1 text-center justify-between">
+                <div>
+                    {/* Nombre del producto */}
+                    <h3 className="font-extralight text-white text-base tracking-widest h-[3rem] flex items-center justify-center leading-none truncate px-2">{product.name}</h3>
+
+                    {/* Descripción simulada */}
+                    <p className="text-sm text-gray-400 line-clamp-1">{product.description}</p>
+                </div>
+
+                {/* Precio */}
+                <div className="text-center mt-5 mb-5">
+                    <span className="font-cabinet font-light text-3xl text-[#FF6B35] tracking-wide">
                         ${product.price.toLocaleString('es-AR')}
                     </span>
-                    <div className="flex items-center gap-2 bg-[#0f0f0f]/70 rounded-lg border border-[#2a2a2a]">
-                        <button
-                            onClick={decreaseQuantity}
-                            disabled={quantity <= 1}
-                            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            −
-                        </button>
-                        <span className="w-8 text-center text-white text-sm font-medium">{quantity}</span>
-                        <button
-                            onClick={increaseQuantity}
-                            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
-                        >
-                            +
-                        </button>
-                    </div>
+                    <p className="text-xs text-gray-500 mt-2">Precio sin impuestos nacionales</p>
                 </div>
                 <button
                     onClick={handleAdd}
                     disabled={isAdded}
-                    className={`w-full py-2.5 text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
-                        isAdded 
-                            ? 'bg-[#FF6B35] scale-105 animate-bounce cursor-not-allowed' 
-                            : 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] hover:from-[#FF5500] hover:to-[#FF6B00] hover:scale-105'
-                    }`}
+                    className={`w-full py-3 px-6 text-base font-medium rounded-full border-2 transition-all duration-200 shadow-lg hover:shadow-xl ${isAdded
+                        ? 'bg-[#FF6B35] border-[#FF6B35] text-white scale-105 cursor-not-allowed'
+                        : 'bg-transparent border-[#FF6B35] text-[#FF6B35] hover:bg-gradient-to-r hover:from-[#FF6B00] hover:to-[#FF8533] hover:text-white hover:border-transparent cursor-pointer'
+                        }`}
                 >
-                    {isAdded ? '✓ ¡Agregado!' : `Agregar ${quantity > 1 ? `(${quantity})` : ''}`}
+                    {isAdded ? '✓ ¡Agregado!' : 'Agregar'}
                 </button>
             </div>
         </div>

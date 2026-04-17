@@ -48,8 +48,8 @@ export default function App() {
         <Navbar cartCount={cartCount} />
         <main className="max-w-5xl mx-auto px-6 py-8">
           <Routes>
-            <Route path="/paty" element={<Navigate to="/menu" />} />
-            <Route path="/menu" element={<MenuPage onAdd={handleAdd} />} />
+            <Route path="/" element={<Navigate to="/menu" />} />
+            <Route path="/menu" element={<MenuPage cartItems={cartItems} onAdd={handleAdd} />} />
             <Route path="/order" element={
               <CheckoutPage
                 items={cartItems}

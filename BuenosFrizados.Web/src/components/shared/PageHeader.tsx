@@ -6,12 +6,11 @@ interface PageHeaderProps {
 export default function PageHeader({ title, subtitle }: PageHeaderProps) {
     return (
         <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                <span className="w-1 h-10 bg-gradient-to-b from-[#FF6B00] to-[#FF8533] rounded-full"></span>
+            <h1 className="text-4xl font-light text-white tracking-widest uppercase mb-2">
                 {title}
             </h1>
             {subtitle && (
-                <p className="text-gray-400 mt-2 ml-7">{subtitle}</p>
+                <p className="text-sm font-extralight tracking-widest bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">{subtitle}</p>
             )}
         </div>
     )
