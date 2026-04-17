@@ -12,9 +12,9 @@ public class ProductService
         _productRepository = productRepository;
     }
 
-    public async Task<List<Product>> GetAllProductsAsync()
+    public async Task<List<Product>> GetAllProductsAsync(bool includeInactive = false)
     {
-        return await _productRepository.GetAllAsync();
+        return await _productRepository.GetAllAsync(includeInactive);
     }
 
     public async Task<Product> GetProductByIdAsync(int id)

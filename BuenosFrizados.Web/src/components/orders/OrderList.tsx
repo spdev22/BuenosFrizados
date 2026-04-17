@@ -1,10 +1,14 @@
 import type { Order } from '../../types'
+import Pagination from '../shared/Pagination'
 
 interface OrderListProps {
     orders: Order[]
+    currentPage: number
+    totalPages: number
     onConfirm: (id: number) => void
     onDeliver: (id: number) => void
     onCancel: (id: number) => void
+    onPageChange: (page: number) => void
 }
 
 const statusStyles: Record<string, string> = {
@@ -14,10 +18,17 @@ const statusStyles: Record<string, string> = {
     Cancelled: 'bg-red-900/30 text-red-400 border-red-800/50',
 }
 
-export default function OrderList({ orders, onConfirm, onDeliver, onCancel }: OrderListProps) {
+const statusTranslations: Record<string, string> = {
+    Pending: 'Pendiente',
+    Confirmed: 'Confirmado',
+    Delivered: 'Entregado',
+    Cancelled: 'Cancelado',
+}
+
+export default function OrderList({ orders, currentPage, totalPages, onConfirm, onDeliver, onCancel, onPageChange }: OrderListProps) {
     if (orders.length === 0) {
         return (
-            <p className="text-center text-gray-400 py-12">No orders yet</p>
+            <p className="text-center text-gray-400 py-12">Aún no hay pedidos</p>
         )
     }
 
@@ -27,7 +38,7 @@ export default function OrderList({ orders, onConfirm, onDeliver, onCancel }: Or
                 <div key={order.id} className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-2xl p-6 shadow-xl">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="font-semibold text-white">Client #{order.clientId}</p>
+                            <p className="font-semibold text-white">Cliente #{order.clientId}</p>
                             <p className="text-sm text-gray-300 mt-1">{order.clientPhoneNumber}</p>
                             <p className="text-xs text-gray-500 mt-1">{order.orderDate}</p>
                         </div>
@@ -36,7 +47,7 @@ export default function OrderList({ orders, onConfirm, onDeliver, onCancel }: Or
                                 ${order.total.toLocaleString('es-AR')}
                             </span>
                             <span className={`text-xs px-3 py-1.5 rounded-xl font-medium border ${statusStyles[order.status] ?? 'bg-gray-800/50 text-gray-500 border-gray-700/50'}`}>
-                                {order.status}
+                                {statusTranslations[order.status] || order.status}
                             </span>
                         </div>
                     </div>
@@ -54,13 +65,13 @@ export default function OrderList({ orders, onConfirm, onDeliver, onCancel }: Or
                                     onClick={() => onConfirm(order.id)}
                                     className="px-4 py-2 border-2 border-teal-800/50 text-teal-400 text-xs rounded-xl hover:bg-teal-900/30 hover:border-teal-700 transition-all duration-200"
                                 >
-                                    Confirm
+                                    Confirmar
                                 </button>
                                 <button
                                     onClick={() => onCancel(order.id)}
                                     className="px-4 py-2 border-2 border-red-800/50 text-red-400 text-xs rounded-xl hover:bg-red-900/30 hover:border-red-700 transition-all duration-200"
                                 >
-                                    Cancel
+                                    Cancelar
                                 </button>
                             </>
                         )}
@@ -69,12 +80,17 @@ export default function OrderList({ orders, onConfirm, onDeliver, onCancel }: Or
                                 onClick={() => onDeliver(order.id)}
                                 className="px-4 py-2 border-2 border-green-800/50 text-green-400 text-xs rounded-xl hover:bg-green-900/30 hover:border-green-700 transition-all duration-200"
                             >
-                                Mark as delivered
+                                Marcar como entregado
                             </button>
                         )}
                     </div>
                 </div>
             ))}
+            <Pagination 
+                currentPage={currentPage} 
+                totalPages={totalPages} 
+                onPageChange={onPageChange} 
+            />
         </div>
     )
 }

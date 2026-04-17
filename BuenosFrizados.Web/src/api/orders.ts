@@ -1,8 +1,8 @@
 import client from './client'
-import type { Order, CreateOrderRequest } from '../types'
+import type { Order, CreateOrderRequest, PaginatedResponse } from '../types'
 
-export const getOrders = async (): Promise<Order[]> => {
-    const response = await client.get<Order[]>('/api/orders')
+export const getOrders = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<Order>> => {
+    const response = await client.get<PaginatedResponse<Order>>(`/api/orders?page=${page}&pageSize=${pageSize}`)
     return response.data
 }
 

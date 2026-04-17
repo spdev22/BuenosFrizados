@@ -7,32 +7,39 @@ import CheckoutPage from './pages/CheckoutPage'
 import AdminPage from './pages/AdminPage'
 
 export default function App() {
+  // set estado: items en el carrito
+  // como funciona el use state? => funcion que toma un valor inicial y devuelve el estado actual y una funcion para cambiar ese valor
   const [cartItems, setCartItems] = useState<OrderItem[]>([])
 
-  const handleAdd = (product: Product) => {
+  // declaracion de una funciona para manejar el agregado de un item al carrito
+  const handleAdd = (product: Product, quantity: number = 1) => {
+    // cambiando el estado del carrito ya que estamos agregando un producto.
+    // si el producto ya esta agregado aumenta la cantidad segun lo seleccionado sino lo agrega a la lista
     setCartItems(prev => {
       const existing = prev.find(i => i.productId === product.id)
       if (existing) {
         return prev.map(i =>
           i.productId === product.id
-            ? { ...i, quantity: i.quantity + 1 }
+            ? { ...i, quantity: i.quantity + quantity }
             : i
         )
       }
       return [...prev, {
         productId: product.id,
         productName: product.name,
-        quantity: 1,
+        quantity: quantity,
         unitPrice: product.price,
         imageUrl: product.imageUrl
       }]
     })
   }
 
+  // lo mismo que el anterior pero esta funcion devuelve la lista sin el producto a remover 
   const handleRemove = (productId: number) => {
     setCartItems(prev => prev.filter(i => i.productId !== productId))
   }
 
+  // cuenta la cantidad de productos en total de cada producto en el carro.
   const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0)
 
   return (
@@ -41,7 +48,7 @@ export default function App() {
         <Navbar cartCount={cartCount} />
         <main className="max-w-5xl mx-auto px-6 py-8">
           <Routes>
-            <Route path="/" element={<Navigate to="/menu" replace />} />
+            <Route path="/paty" element={<Navigate to="/menu" />} />
             <Route path="/menu" element={<MenuPage onAdd={handleAdd} />} />
             <Route path="/order" element={
               <CheckoutPage

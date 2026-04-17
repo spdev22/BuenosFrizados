@@ -37,3 +37,13 @@ export interface CreateOrderItemRequest {
     quantity: number
     unitPrice: number
 }
+
+export interface PaginatedResponse<T> {
+    data: T[]
+    currentPage: number
+    pageSize: number
+    totalCount: number
+    totalPages: number
+    hasPrevious: boolean
+    hasNext: boolean
+}

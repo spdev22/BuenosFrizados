@@ -25,14 +25,14 @@ export default function Navbar({ cartCount }: NavbarProps) {
                     className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/menu') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
                         }`}
                 >
-                    Menu
+                    Menú
                 </button>
                 <button
                     onClick={() => navigate('/order')}
                     className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/order') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
                         }`}
                 >
-                    Order {cartCount > 0 && `(${cartCount})`}
+                    Pedido {cartCount > 0 && `(${cartCount})`}
                 </button>
                 <button
                     onClick={() => navigate('/admin')}

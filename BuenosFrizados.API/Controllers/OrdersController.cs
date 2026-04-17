@@ -17,10 +17,12 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        var orders = await _service.GetAllOrdersAsync();
-        var response = orders.Select(o => new OrderResponse
+        var orders = await _service.GetAllOrdersAsync(page, pageSize);
+        var totalCount = await _service.GetTotalOrdersCountAsync();
+        
+        var orderResponses = orders.Select(o => new OrderResponse
         {
             Id = o.Id,
             ClientId = o.ClientId,
@@ -35,7 +37,16 @@ public class OrdersController : ControllerBase
                 Quantity = i.Quantity,
                 UnitPrice = i.UnitPrice
             }).ToList()
-        });
+        }).ToList();
+        
+        var response = new PaginatedResponse<OrderResponse>
+        {
+            Data = orderResponses,
+            CurrentPage = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
+        
         return Ok(response);
     }
 

@@ -13,9 +13,14 @@ public class OrderService
        _repository = repository;
     }
 
-    public async Task<List<Order>> GetAllOrdersAsync()
+    public async Task<List<Order>> GetAllOrdersAsync(int page = 1, int pageSize = 10)
     {
-        return await _repository.GetAllAsync();
+        return await _repository.GetAllAsync(page, pageSize);
+    }
+
+    public async Task<int> GetTotalOrdersCountAsync()
+    {
+        return await _repository.GetTotalCountAsync();
     }
 
     public async Task<Order> GetOrderByIdAsync(int id)

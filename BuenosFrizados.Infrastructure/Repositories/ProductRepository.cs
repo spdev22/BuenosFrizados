@@ -13,9 +13,14 @@ public class ProductRepository
         _context = context;
     }
 
-    public async Task<List<Product>> GetAllAsync()
+    public async Task<List<Product>> GetAllAsync(bool includeInactive = false)
     {
-        return await _context.Products.Where(product => product.IsActive).ToListAsync();
+        var query = _context.Products.AsQueryable();
+        if (!includeInactive)
+        {
+            query = query.Where(product => product.IsActive);
+        }
+        return await query.ToListAsync();
     }
 
     public async Task<Product> GetByIdAsync(int id)

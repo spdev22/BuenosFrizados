@@ -3,16 +3,25 @@ import type { Product } from '../../types'
 
 interface ProductCardProps {
     product: Product
-    onAdd: (product: Product) => void
+    onAdd: (product: Product, quantity?: number) => void
 }
 
 export default function ProductCard({ product, onAdd }: ProductCardProps) {
     const [isAdded, setIsAdded] = useState(false)
+    const [quantity, setQuantity] = useState(1)
 
     const handleAdd = () => {
-        onAdd(product)
+        onAdd(product, quantity)
         setIsAdded(true)
         setTimeout(() => setIsAdded(false), 1500) // Reset after 1.5 seconds
+    }
+
+    const decreaseQuantity = () => {
+        if (quantity > 1) setQuantity(quantity - 1)
+    }
+
+    const increaseQuantity = () => {
+        setQuantity(quantity + 1)
     }
 
     return (
@@ -25,9 +34,9 @@ export default function ProductCard({ product, onAdd }: ProductCardProps) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
                 {isAdded && (
-                    <div className="absolute inset-0 bg-green-500/20 backdrop-blur-sm flex items-center justify-center">
-                        <div className="bg-green-500/90 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
-                            ✓ Added to cart!
+                    <div className="absolute inset-0 bg-[#FF6B35]/20 backdrop-blur-sm flex items-center justify-center">
+                        <div className="bg-[#FF6B35]/90 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
+                            ¡✓ Agregado!
                         </div>
                     </div>
                 )}
@@ -36,20 +45,38 @@ export default function ProductCard({ product, onAdd }: ProductCardProps) {
                 <h3 className="font-semibold text-white text-lg">{product.name}</h3>
                 <p className="text-sm text-gray-400 leading-relaxed">{product.description}</p>
             </div>
-            <div className="flex items-center justify-between mt-auto pt-2">
-                <span className="font-bold text-xl text-[#FF6B00]">
-                    ${product.price.toLocaleString('es-AR')}
-                </span>
+            <div className="flex flex-col gap-3 mt-auto pt-2">
+                <div className="flex items-center justify-between">
+                    <span className="font-bold text-xl text-[#FF6B00]">
+                        ${product.price.toLocaleString('es-AR')}
+                    </span>
+                    <div className="flex items-center gap-2 bg-[#0f0f0f]/70 rounded-lg border border-[#2a2a2a]">
+                        <button
+                            onClick={decreaseQuantity}
+                            disabled={quantity <= 1}
+                            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            −
+                        </button>
+                        <span className="w-8 text-center text-white text-sm font-medium">{quantity}</span>
+                        <button
+                            onClick={increaseQuantity}
+                            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                        >
+                            +
+                        </button>
+                    </div>
+                </div>
                 <button
                     onClick={handleAdd}
                     disabled={isAdded}
-                    className={`px-5 py-2.5 text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
+                    className={`w-full py-2.5 text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
                         isAdded 
-                            ? 'bg-green-500 scale-110 animate-bounce cursor-not-allowed' 
+                            ? 'bg-[#FF6B35] scale-105 animate-bounce cursor-not-allowed' 
                             : 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] hover:from-[#FF5500] hover:to-[#FF6B00] hover:scale-105'
                     }`}
                 >
-                    {isAdded ? '✓ Added!' : 'Add'}
+                    {isAdded ? '✓ ¡Agregado!' : `Agregar ${quantity > 1 ? `(${quantity})` : ''}`}
                 </button>
             </div>
         </div>

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 interface ToastProps {
     message: string
-    type: 'error' | 'success'
+    type: 'error' | 'primary'
     onClose: () => void
 }
 
@@ -14,7 +14,7 @@ export default function Toast({ message, type, onClose }: ToastProps) {
 
     const styles = {
         error: 'bg-red-500 text-white',
-        success: 'bg-[#185FA5] text-white'
+        primary: 'bg-[#FF6B35] text-white'
     }
 
     return (

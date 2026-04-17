@@ -2,13 +2,13 @@ import { useState, useCallback } from 'react'
 
 interface Toast {
     message: string
-    type: 'error' | 'success'
+    type: 'error' | 'primary'
 }
 
 export function useToast() {
     const [toast, setToast] = useState<Toast | null>(null)
 
-    const showToast = useCallback((message: string, type: 'error' | 'success') => {
+    const showToast = useCallback((message: string, type: 'error' | 'primary') => {
         setToast({ message, type })
     }, [])
 

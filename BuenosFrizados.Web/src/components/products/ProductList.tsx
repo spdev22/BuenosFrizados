@@ -9,7 +9,7 @@ interface ProductListProps {
 export default function ProductList({ products, onAdd }: ProductListProps) {
     if (products.length === 0) {
         return (
-            <p className="text-center text-gray-400 py-12">No products available</p>
+            <p className="text-center text-gray-400 py-12">No hay productos disponibles</p>
         )
     }
 

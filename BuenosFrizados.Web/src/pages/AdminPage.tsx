@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import type { Order, Product } from '../types'
 import { getOrders, confirmOrder, deliverOrder, cancelOrder } from '../api/orders'
-import { getProducts, createProduct, updateProduct } from '../api/products'
+import { getProducts, createProduct, updateProduct, deleteProduct } from '../api/products'
 import OrderList from '../components/orders/OrderList'
 import ProductAdminList from '../components/products/ProductAdminList'
 import ProductForm from '../components/products/ProductForm'
 import Toast from '../components/shared/Toast'
 import { useToast } from '../hooks/useToast'
+import PageHeader from '../components/shared/PageHeader'
+import ConfirmModal from '../components/shared/ConfirmModal'
 
 export default function AdminPage() {
     const [orders, setOrders] = useState<Order[]>([])
@@ -15,25 +17,37 @@ export default function AdminPage() {
     const [activeTab, setActiveTab] = useState<'orders' | 'products'>('orders')
     const [editingProduct, setEditingProduct] = useState<Product | null>(null)
     const [showForm, setShowForm] = useState(false)
+    const [productToDelete, setProductToDelete] = useState<Product | null>(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
     const { toast, showToast, hideToast } = useToast()
 
+    const loadOrders = async (page: number = 1) => {
+        try {
+            const paginatedResponse = await getOrders(page, 10)
+            setOrders(paginatedResponse.data)
+            setTotalPages(paginatedResponse.totalPages)
+        } catch {
+            showToast('Error al cargar pedidos.', 'error')
+        }
+    }
+
     useEffect(() => {
-        Promise.all([getOrders(), getProducts()])
-            .then(([orders, products]) => {
-                setOrders(orders)
+        Promise.all([loadOrders(currentPage), getProducts(true)])
+            .then(([, products]) => {
                 setProducts(products)
             })
-            .catch(() => showToast('Failed to load data.', 'error'))
+            .catch(() => showToast('Error al cargar datos.', 'error'))
             .finally(() => setLoading(false))
-    }, [])
+    }, [currentPage])
 
     const handleConfirm = async (id: number) => {
         try {
             await confirmOrder(id)
             setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'Confirmed' } : o))
-            showToast('Order confirmed.', 'success')
+            showToast('Pedido confirmado.', 'primary')
         } catch {
-            showToast('Failed to confirm order.', 'error')
+            showToast('Error al confirmar pedido.', 'error')
         }
     }
 
@@ -41,9 +55,9 @@ export default function AdminPage() {
         try {
             await deliverOrder(id)
             setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'Delivered' } : o))
-            showToast('Order marked as delivered.', 'success')
+            showToast('Pedido marcado como entregado.', 'primary')
         } catch {
-            showToast('Failed to update order.', 'error')
+            showToast('Error al actualizar pedido.', 'error')
         }
     }
 
@@ -51,9 +65,9 @@ export default function AdminPage() {
         try {
             await cancelOrder(id)
             setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'Cancelled' } : o))
-            showToast('Order cancelled.', 'success')
+            showToast('Pedido cancelado.', 'primary')
         } catch {
-            showToast('Failed to cancel order.', 'error')
+            showToast('Error al cancelar pedido.', 'error')
         }
     }
 
@@ -62,9 +76,9 @@ export default function AdminPage() {
             const created = await createProduct({ ...data, isActive: true })
             setProducts(prev => [...prev, created])
             setShowForm(false)
-            showToast('Product created.', 'success')
+            showToast('Producto creado.', 'primary')
         } catch {
-            showToast('Failed to create product.', 'error')
+            showToast('Error al crear producto.', 'error')
         }
     }
 
@@ -74,9 +88,9 @@ export default function AdminPage() {
             await updateProduct(editingProduct.id, { ...data, isActive: editingProduct.isActive })
             setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...data } : p))
             setEditingProduct(null)
-            showToast('Product updated.', 'success')
+            showToast('Producto actualizado.', 'primary')
         } catch {
-            showToast('Failed to update product.', 'error')
+            showToast('Error al actualizar producto.', 'error')
         }
     }
 
@@ -84,30 +98,45 @@ export default function AdminPage() {
         try {
             await updateProduct(product.id, { ...product, isActive: !product.isActive })
             setProducts(prev => prev.map(p => p.id === product.id ? { ...p, isActive: !p.isActive } : p))
-            showToast(product.isActive ? 'Product deactivated.' : 'Product activated.', 'success')
+            showToast(product.isActive ? 'Producto desactivado.' : 'Producto activado.', 'primary')
         } catch {
-            showToast('Failed to update product.', 'error')
+            showToast('Error al actualizar producto.', 'error')
         }
+    }
+
+    const handleDelete = (product: Product) => {
+        setProductToDelete(product)
+    }
+
+    const confirmDelete = async () => {
+        if (!productToDelete) return
+        try {
+            await deleteProduct(productToDelete.id)
+            setProducts(prev => prev.filter(p => p.id !== productToDelete.id))
+            showToast('Producto eliminado.', 'error')
+        } catch {
+            showToast('Error al eliminar producto.', 'error')
+        } finally {
+            setProductToDelete(null)
+        }
+    }
+
+    const cancelDelete = () => {
+        setProductToDelete(null)
     }
 
     if (loading) {
         return (
             <div className="text-center py-16">
                 <div className="inline-block w-8 h-8 border-4 border-[#FF6B00] border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-gray-400 mt-4">Loading admin panel...</p>
+                <p className="text-gray-400 mt-4">Cargando panel de administración...</p>
             </div>
         )
     }
 
     return (
         <div>
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                    <span className="w-1 h-10 bg-gradient-to-b from-[#FF6B00] to-[#FF8533] rounded-full"></span>
-                    Admin Panel
-                </h1>
-                <p className="text-gray-400 mt-2 ml-7">Manage orders and products</p>
-            </div>
+            <PageHeader title="Panel de Administración" subtitle="Administrá pedidos y productos" />
             
             <div className="flex items-center justify-between mb-8">
                 <div className="flex gap-1 bg-[#1a1a1a]/80 backdrop-blur-sm rounded-2xl p-1 border border-[#2a2a2a]/60 shadow-xl">
@@ -116,14 +145,14 @@ export default function AdminPage() {
                         className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'orders' ? 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white shadow-md' : 'text-gray-400 hover:text-white'
                             }`}
                     >
-                        Orders
+                        Pedidos
                     </button>
                     <button
                         onClick={() => setActiveTab('products')}
                         className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'products' ? 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white shadow-md' : 'text-gray-400 hover:text-white'
                             }`}
                     >
-                        Products
+                        Productos
                     </button>
                 </div>
                 {activeTab === 'products' && !showForm && !editingProduct && (
@@ -131,13 +160,21 @@ export default function AdminPage() {
                         onClick={() => setShowForm(true)}
                         className="px-5 py-2.5 bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white rounded-xl text-sm font-semibold hover:from-[#FF5500] hover:to-[#FF6B00] transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
-                        + New product
+                        + Nuevo producto
                     </button>
                 )}
             </div>
 
             {activeTab === 'orders' && (
-                <OrderList orders={orders} onConfirm={handleConfirm} onDeliver={handleDeliver} onCancel={handleCancel} />
+                <OrderList 
+                    orders={orders} 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onConfirm={handleConfirm} 
+                    onDeliver={handleDeliver} 
+                    onCancel={handleCancel}
+                    onPageChange={setCurrentPage}
+                />
             )}
 
             {activeTab === 'products' && (
@@ -159,11 +196,21 @@ export default function AdminPage() {
                         products={products}
                         onEdit={setEditingProduct}
                         onToggle={handleToggle}
+                        onDelete={handleDelete}
                     />
                 </div>
             )}
 
             {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
+            <ConfirmModal
+                isOpen={!!productToDelete}
+                title="¿Eliminar producto?"
+                message={`¿Estás seguro de eliminar "${productToDelete?.name}"? Esta acción no se puede deshacer.`}
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
         </div>
     )
 }

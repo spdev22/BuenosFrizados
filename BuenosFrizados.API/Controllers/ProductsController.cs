@@ -16,9 +16,9 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] bool includeInactive = false)
     {
-        var products = await _service.GetAllProductsAsync();
+        var products = await _service.GetAllProductsAsync(includeInactive);
         var response = products.Select(p => new ProductResponse
         {
             Id = p.Id,
@@ -58,6 +58,13 @@ public class ProductsController : ControllerBase
             IsActive = request.IsActive
         };
         await _service.UpdateProductAsync(product);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _service.DeleteProductAsync(id);
         return NoContent();
     }
 }

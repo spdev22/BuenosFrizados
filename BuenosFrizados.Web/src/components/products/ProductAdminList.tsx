@@ -4,11 +4,12 @@ interface ProductAdminListProps {
     products: Product[]
     onEdit: (product: Product) => void
     onToggle: (product: Product) => void
+    onDelete: (product: Product) => void
 }
 
-export default function ProductAdminList({ products, onEdit, onToggle }: ProductAdminListProps) {
+export default function ProductAdminList({ products, onEdit, onToggle, onDelete }: ProductAdminListProps) {
     if (products.length === 0) {
-        return <p className="text-center text-gray-400 py-12">No products yet</p>
+        return <p className="text-center text-gray-400 py-12">Aún no hay productos</p>
     }
 
     return (
@@ -30,13 +31,13 @@ export default function ProductAdminList({ products, onEdit, onToggle }: Product
                                 ? 'bg-green-900/30 text-green-400 border-green-800/50'
                                 : 'bg-gray-800/50 text-gray-500 border-gray-700/50'
                             }`}>
-                            {product.isActive ? 'Active' : 'Inactive'}
+                            {product.isActive ? 'Activo' : 'Inactivo'}
                         </span>
                         <button
                             onClick={() => onEdit(product)}
                             className="px-4 py-2 border-2 border-[#2a2a2a] text-gray-300 text-xs rounded-xl hover:bg-[#2a2a2a]/30 hover:text-white transition-all duration-200"
                         >
-                            Edit
+                            Editar
                         </button>
                         <button
                             onClick={() => onToggle(product)}
@@ -45,7 +46,13 @@ export default function ProductAdminList({ products, onEdit, onToggle }: Product
                                     : 'border-[#FF6B00]/50 text-[#FF6B00] hover:bg-[#FF6B00]/10 hover:border-[#FF6B00]'
                                 }`}
                         >
-                            {product.isActive ? 'Deactivate' : 'Activate'}
+                            {product.isActive ? 'Desactivar' : 'Activar'}
+                        </button>
+                        <button
+                            onClick={() => onDelete(product)}
+                            className="px-4 py-2 border-2 border-red-600/50 text-red-500 text-xs rounded-xl hover:bg-red-900/30 hover:border-red-500 transition-all duration-200"
+                        >
+                            Eliminar
                         </button>
                     </div>
                 </div>

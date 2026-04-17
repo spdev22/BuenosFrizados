@@ -13,9 +13,14 @@ public class OrderRepository
         _context = context;
     }
 
-    public async Task<List<Order>> GetAllAsync()
+    public async Task<List<Order>> GetAllAsync(int page = 1, int pageSize = 10)
     {
-        return await _context.Orders.Include(o => o.Items).OrderByDescending(p => p.OrderDate).ToListAsync();
+        return await _context.Orders
+            .Include(o => o.Items)
+            .OrderByDescending(p => p.OrderDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
     }
 
     public async Task<Order> GetByIdAsync(int id)
@@ -36,6 +41,11 @@ public class OrderRepository
         if (order is null) return;
         order.Status = newStatus;
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<int> GetTotalCountAsync()
+    {
+        return await _context.Orders.CountAsync();
     }
     
 
