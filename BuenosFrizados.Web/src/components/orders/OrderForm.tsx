@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import type { CreateOrderRequest, OrderItem } from '../../types'
 import OrderItemComponent from './OrderItem'
 import FieldError from '../shared/FieldError'
 import { useFormValidation } from '../../hooks/useFormValidation'
+import { sendToWhatsApp } from '../../utils/whatsapp'
+import { FaWhatsapp } from 'react-icons/fa'
 
 interface OrderFormProps {
     items: OrderItem[]
@@ -11,25 +13,58 @@ interface OrderFormProps {
     onError: (message: string) => void
 }
 
-export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderFormProps) {
-    const [clientId, setClientId] = useState('')
+export default function OrderForm({ items, onRemove, onSubmit }: OrderFormProps) {
+    const [clientName, setClientName] = useState('')
     const [clientPhoneNumber, setClientPhoneNumber] = useState('')
+    const [deliveryAddress, setDeliveryAddress] = useState('')
+    const [deliveryDate, setDeliveryDate] = useState('')
+    const dateInputRef = useRef<HTMLInputElement>(null)
+
+    // Días de la semana permitidos (0 = domingo, 1 = lunes, ... 6 = sábado)
+    const allowedDays = [1, 5] // martes a sábado
+
+    const getNextAvailableDate = () => {
+        const today = new Date()
+        let nextDate = new Date(today)
+        nextDate.setDate(today.getDate() + 1) // empezar desde mañana
+
+        // Encontrar el próximo día permitido
+        while (!allowedDays.includes(nextDate.getDay())) {
+            nextDate.setDate(nextDate.getDate() + 1)
+        }
+
+        const year = nextDate.getFullYear()
+        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0')
+        const day = nextDate.getDate().toString().padStart(2, '0')
+        return `${year}-${month}-${day}`
+    }
+
+    const isDateAllowed = (dateStr: string) => {
+        if (!dateStr) return false
+        const date = new Date(dateStr + 'T00:00:00')
+        return allowedDays.includes(date.getDay())
+    }
 
     const { errors, validate, clearError } = useFormValidation<{
-        clientId: string
+        clientName: string
         clientPhoneNumber: string
+        deliveryAddress: string
+        deliveryDate: string
     }>({
-        clientId: (v) => !v || Number(v) <= 0 ? 'El ID del cliente es requerido' : null,
+        clientName: (v) => !v ? 'El nombre es requerido' : null,
         clientPhoneNumber: (v) => !v ? 'El número de teléfono es requerido' : v.length < 8 ? 'El número de teléfono es muy corto' : null,
+        deliveryAddress: (v) => !v ? 'La dirección de entrega es requerida' : null,
+        deliveryDate: (v) => !v ? 'La fecha de entrega es requerida' : !isDateAllowed(v) ? 'Por favor, eliga una fecha que sea lunes o viernes' : null,
     })
 
     const total = items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0)
 
     const handleSubmit = () => {
-        const valid = validate({ clientId, clientPhoneNumber })
+        const valid = validate({ clientName, clientPhoneNumber, deliveryAddress, deliveryDate })
         if (!valid) return
-        onSubmit({
-            clientId: Number(clientId),
+
+        const orderData: CreateOrderRequest = {
+            clientId: 1, // ID por defecto
             clientPhoneNumber,
             items: items.map(i => ({
                 productId: i.productId,
@@ -37,7 +72,13 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
                 quantity: i.quantity,
                 unitPrice: i.unitPrice
             }))
-        })
+        }
+
+        // Enviar a WhatsApp con dirección, fecha y nombre
+        sendToWhatsApp(orderData, deliveryAddress, deliveryDate, clientName)
+
+        // Registrar en el sistema
+        onSubmit(orderData)
     }
 
     if (items.length === 0) {
@@ -49,10 +90,7 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-2xl p-6 shadow-xl">
-                <h2 className="font-semibold text-white text-xl mb-5 flex items-center gap-2">
-                    <span className="w-1 h-10 bg-gradient-to-b from-[#FF6B00] to-[#FF8533] rounded-full"></span>
-                    Tu pedido
-                </h2>
+
                 {items.map(item => (
                     <OrderItemComponent key={item.productId} item={item} onRemove={onRemove} />
                 ))}
@@ -63,20 +101,16 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
             </div>
 
             <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-2xl p-6 flex flex-col gap-4 shadow-xl">
-                <h2 className="font-semibold text-white text-xl flex items-center gap-2">
-                    <span className="w-1 h-10 bg-gradient-to-b from-[#FF6B00] to-[#FF8533] rounded-full"></span>
-                    Datos del cliente
-                </h2>
                 <div>
+                    <label className="block text-sm text-gray-400 mb-2">Datos del cliente</label>
                     <input
-                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm bg-[#0f0f0f]/70 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] transition-colors ${errors.clientId ? 'border-red-400' : 'border-[#2a2a2a]'
+                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm bg-[#0f0f0f]/70 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] transition-colors ${errors.clientName ? 'border-red-400' : 'border-[#2a2a2a]'
                             }`}
-                        placeholder="ID del cliente"
-                        type="number"
-                        value={clientId}
-                        onChange={e => { setClientId(e.target.value); clearError('clientId') }}
+                        placeholder="Nombre completo"
+                        value={clientName}
+                        onChange={e => { setClientName(e.target.value); clearError('clientName') }}
                     />
-                    <FieldError message={errors.clientId} />
+                    <FieldError message={errors.clientName} />
                 </div>
                 <div>
                     <input
@@ -88,11 +122,52 @@ export default function OrderForm({ items, onRemove, onSubmit, onError }: OrderF
                     />
                     <FieldError message={errors.clientPhoneNumber} />
                 </div>
+                <div>
+                    <input
+                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm bg-[#0f0f0f]/70 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] transition-colors ${errors.deliveryAddress ? 'border-red-400' : 'border-[#2a2a2a]'
+                            }`}
+                        placeholder="Dirección de entrega"
+                        value={deliveryAddress}
+                        onChange={e => { setDeliveryAddress(e.target.value); clearError('deliveryAddress') }}
+                    />
+                    <FieldError message={errors.deliveryAddress} />
+                </div>
+                <div>
+                    <label className="block text-sm text-gray-400 mb-2">Fecha de entrega</label>
+                    <div
+                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm bg-[#0f0f0f]/70 text-white cursor-pointer transition-colors ${errors.deliveryDate ? 'border-red-400' : 'border-[#2a2a2a] hover:border-[#FF6B00]'
+                            }`}
+                        onClick={() => dateInputRef.current?.showPicker?.()}
+                    >
+                        {deliveryDate ? new Date(deliveryDate + 'T00:00:00').toLocaleDateString('es-AR') : 'Seleccionar fecha'}
+                    </div>
+                    <input
+                        ref={dateInputRef}
+                        type="date"
+                        className="sr-only"
+                        value={deliveryDate}
+                        onChange={e => {
+                            const selectedDate = e.target.value
+                            if (isDateAllowed(selectedDate)) {
+                                setDeliveryDate(selectedDate)
+                                clearError('deliveryDate')
+                            } else {
+                                // No cambiar el valor, pero mostrar error
+                                validate({ clientName, clientPhoneNumber, deliveryAddress, deliveryDate: selectedDate })
+                            }
+                        }}
+                        min={getNextAvailableDate()}
+                    />
+                    <FieldError message={errors.deliveryDate} />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">* Por el momento solo entregamos los dias lunes y viernes  </p>
+
                 <button
                     onClick={handleSubmit}
-                    className="mt-auto w-full py-3.5 bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white rounded-xl text-sm font-semibold hover:from-[#FF5500] hover:to-[#FF6B00] transition-all duration-200 shadow-lg hover:shadow-xl"
+                    className="mt-auto w-full py-3.5 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white rounded-xl text-sm font-semibold hover:from-[#20B858] hover:to-[#0F7A6B] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 cursor-pointer"
                 >
-                    Confirmar pedido
+                    <FaWhatsapp className="text-lg" />
+                    Confirmar y enviar por WhatsApp
                 </button>
             </div>
         </div>
