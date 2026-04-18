@@ -53,11 +53,13 @@ export default function OrderForm({ items, onRemove, onSubmit }: OrderFormProps)
     }>({
         clientName: (v) => !v ? 'El nombre es requerido' : null,
         clientPhoneNumber: (v) => !v ? 'El número de teléfono es requerido' : v.length < 8 ? 'El número de teléfono es muy corto' : null,
-        deliveryAddress: (v) => !v ? 'La dirección de entrega es requerida' : null,
-        deliveryDate: (v) => !v ? 'La fecha de entrega es requerida' : !isDateAllowed(v) ? 'Por favor, eliga una fecha que sea lunes o viernes' : null,
+        deliveryAddress: (v) => !isDeliveryEligible ? null : !v ? 'La dirección de entrega es requerida' : null,
+        deliveryDate: (v) => !v ? null : !isDateAllowed(v) ? 'Por favor, eliga una fecha que sea lunes o viernes' : null,
     })
 
     const total = items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0)
+    const minimumDelivery = 40000
+    const isDeliveryEligible = total >= minimumDelivery
 
     const handleSubmit = () => {
         const valid = validate({ clientName, clientPhoneNumber, deliveryAddress, deliveryDate })
@@ -124,19 +126,33 @@ export default function OrderForm({ items, onRemove, onSubmit }: OrderFormProps)
                 </div>
                 <div>
                     <input
-                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm bg-[#0f0f0f]/70 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] transition-colors ${errors.deliveryAddress ? 'border-red-400' : 'border-[#2a2a2a]'
-                            }`}
-                        placeholder="Dirección de entrega"
+                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none transition-colors ${
+                            !isDeliveryEligible 
+                                ? 'bg-gray-700/50 border-gray-600 cursor-not-allowed opacity-60' 
+                                : errors.deliveryAddress 
+                                    ? 'border-red-400 bg-[#0f0f0f]/70' 
+                                    : 'border-[#2a2a2a] bg-[#0f0f0f]/70 focus:border-[#FF6B00]'
+                        }`}
+                        placeholder={isDeliveryEligible ? "Dirección de entrega" : "Dirección de entrega (mínimo $40.000)"}
                         value={deliveryAddress}
                         onChange={e => { setDeliveryAddress(e.target.value); clearError('deliveryAddress') }}
+                        disabled={!isDeliveryEligible}
                     />
+                    {!isDeliveryEligible && (
+                        <p className="text-xs text-gray-400 mt-1">
+                            ⚠️ Agregá ${(minimumDelivery - total).toLocaleString()} más para habilitar entrega a domicilio
+                        </p>
+                    )}
                     <FieldError message={errors.deliveryAddress} />
                 </div>
                 <div>
                     <label className="block text-sm text-gray-400 mb-2">Fecha de entrega</label>
                     <div
-                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm bg-[#0f0f0f]/70 text-white cursor-pointer transition-colors ${errors.deliveryDate ? 'border-red-400' : 'border-[#2a2a2a] hover:border-[#FF6B00]'
-                            }`}
+                        className={`w-full border-2 rounded-xl px-4 py-3 text-sm text-white cursor-pointer transition-colors ${
+                            errors.deliveryDate 
+                                ? 'border-red-400 bg-[#0f0f0f]/70' 
+                                : 'border-[#2a2a2a] bg-[#0f0f0f]/70 hover:border-[#FF6B00]'
+                        }`}
                         onClick={() => dateInputRef.current?.showPicker?.()}
                     >
                         {deliveryDate ? new Date(deliveryDate + 'T00:00:00').toLocaleDateString('es-AR') : 'Seleccionar fecha'}

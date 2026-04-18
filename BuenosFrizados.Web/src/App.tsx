@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import type { Product, OrderItem } from './types'
 import Navbar from './components/shared/Navbar'
+import Footer from './components/shared/Footer'
 import MenuPage from './pages/MenuPage'
 import CheckoutPage from './pages/CheckoutPage'
 import AdminPage from './pages/AdminPage'
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </BrowserRouter>
   )
