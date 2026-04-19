@@ -13,27 +13,51 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Database configuration - support both SQL Server and PostgreSQL
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? 
-                      builder.Configuration.GetConnectionString("DefaultConnection");
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+var connectionString = databaseUrl ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Log connection details for debugging
+Console.WriteLine($"DATABASE_URL: {(string.IsNullOrEmpty(databaseUrl) ? "Not set" : "Set")}");
+Console.WriteLine($"Connection string starts with postgres://: {connectionString?.StartsWith("postgres://") == true}");
+Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
 
 builder.Services.AddDbContext<BuenosFrizadosDbContext>(options =>
 {
-    if (connectionString?.StartsWith("postgres://") == true)
+    if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgres://"))
     {
-        // Railway PostgreSQL connection string format
-        var databaseUri = new Uri(connectionString);
-        var userInfo = databaseUri.UserInfo.Split(':');
-        var connectionStringBuilder = $"Host={databaseUri.Host};" +
-                                    $"Port={databaseUri.Port};" +
-                                    $"Database={databaseUri.LocalPath.Trim('/')};" +
-                                    $"Username={userInfo[0]};" +
-                                    $"Password={userInfo[1]};" +
-                                    "SSL Mode=Require;Trust Server Certificate=true";
-        options.UseNpgsql(connectionStringBuilder);
+        try
+        {
+            // Railway PostgreSQL connection string format
+            Console.WriteLine("Using PostgreSQL for Railway deployment");
+            var databaseUri = new Uri(databaseUrl);
+            var userInfo = databaseUri.UserInfo.Split(':');
+            
+            if (userInfo.Length != 2)
+            {
+                throw new InvalidOperationException("Invalid DATABASE_URL format - missing username or password");
+            }
+            
+            var connectionStringBuilder = $"Host={databaseUri.Host};" +
+                                        $"Port={databaseUri.Port};" +
+                                        $"Database={databaseUri.LocalPath.Trim('/')};" +
+                                        $"Username={userInfo[0]};" +
+                                        $"Password={userInfo[1]};" +
+                                        "SSL Mode=Require;Trust Server Certificate=true";
+            Console.WriteLine($"PostgreSQL connection string: {connectionStringBuilder.Replace(userInfo[1], "***")}");
+            options.UseNpgsql(connectionStringBuilder);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
+            Console.WriteLine("Falling back to SQL Server configuration");
+            options.UseSqlServer(connectionString);
+        }
     }
     else
     {
         // Local SQL Server
+        Console.WriteLine("Using SQL Server for local development");
+        Console.WriteLine($"SQL Server connection string: {connectionString?.Replace("Password=BuenosFrizados123!", "Password=***")}");
         options.UseSqlServer(connectionString);
     }
 });
