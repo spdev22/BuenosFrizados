@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using BuenosFrizados.API.Middleware;
+using System.Collections;
 
 var builder = WebApplication.CreateBuilder(args);
 
