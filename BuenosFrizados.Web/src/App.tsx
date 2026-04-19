@@ -3,9 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import type { Product, OrderItem } from './types'
 import Navbar from './components/shared/Navbar'
 import Footer from './components/shared/Footer'
+import ProtectedRoute from './components/shared/ProtectedRoute'
 import MenuPage from './pages/MenuPage'
 import CheckoutPage from './pages/CheckoutPage'
 import AdminPage from './pages/AdminPage'
+import AdminLoginPage from './pages/AdminLoginPage'
 
 export default function App() {
   // set estado: items en el carrito
@@ -58,7 +60,12 @@ export default function App() {
                 onClearCart={() => setCartItems([])}
               />
             } />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AdminPage />
+              </ProtectedRoute>
+            } />
           </Routes>
         </main>
         <Footer />

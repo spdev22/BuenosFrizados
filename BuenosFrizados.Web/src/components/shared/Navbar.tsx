@@ -34,13 +34,6 @@ export default function Navbar({ cartCount }: NavbarProps) {
                 >
                     Pedido {cartCount > 0 && `(${cartCount})`}
                 </button>
-                <button
-                    onClick={() => navigate('/admin')}
-                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/admin') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
-                        }`}
-                >
-                    Admin
-                </button>
             </div>
         </nav>
     )

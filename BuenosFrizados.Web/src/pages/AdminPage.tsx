@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Order, Product } from '../types'
 import { getOrders, confirmOrder, deliverOrder, cancelOrder } from '../api/orders'
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../api/products'
+import { useAdminAuth } from '../hooks/useAdminAuth'
 import OrderList from '../components/orders/OrderList'
 import ProductAdminList from '../components/products/ProductAdminList'
 import ProductForm from '../components/products/ProductForm'
@@ -21,6 +22,7 @@ export default function AdminPage() {
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const { toast, showToast, hideToast } = useToast()
+    const { logout } = useAdminAuth()
 
     const loadOrders = async (page: number = 1) => {
         try {
@@ -136,8 +138,8 @@ export default function AdminPage() {
 
     return (
         <div>
-            <PageHeader title="Panel de Administración" subtitle="Administrá pedidos y productos" />
-            
+            <PageHeader title="Panel de Administración" />
+
             <div className="flex items-center justify-between mb-8">
                 <div className="flex gap-1 bg-[#1a1a1a]/80 backdrop-blur-sm rounded-2xl p-1 border border-[#2a2a2a]/60 shadow-xl">
                     <button
@@ -155,23 +157,31 @@ export default function AdminPage() {
                         Productos
                     </button>
                 </div>
-                {activeTab === 'products' && !showForm && !editingProduct && (
+                <div className="flex items-center gap-3">
+                    {activeTab === 'products' && !showForm && !editingProduct && (
+                        <button
+                            onClick={() => setShowForm(true)}
+                            className="px-5 py-2.5 bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white rounded-xl text-sm font-semibold hover:from-[#FF5500] hover:to-[#FF6B00] transition-all duration-200 shadow-lg hover:shadow-xl"
+                        >
+                            + Nuevo producto
+                        </button>
+                    )}
                     <button
-                        onClick={() => setShowForm(true)}
-                        className="px-5 py-2.5 bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white rounded-xl text-sm font-semibold hover:from-[#FF5500] hover:to-[#FF6B00] transition-all duration-200 shadow-lg hover:shadow-xl"
+                        onClick={logout}
+                        className="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl text-sm font-medium hover:bg-red-500/30 hover:text-red-300 transition-colors"
                     >
-                        + Nuevo producto
+                        Cerrar Sesión
                     </button>
-                )}
+                </div>
             </div>
 
             {activeTab === 'orders' && (
-                <OrderList 
-                    orders={orders} 
+                <OrderList
+                    orders={orders}
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    onConfirm={handleConfirm} 
-                    onDeliver={handleDeliver} 
+                    onConfirm={handleConfirm}
+                    onDeliver={handleDeliver}
                     onCancel={handleCancel}
                     onPageChange={setCurrentPage}
                 />
