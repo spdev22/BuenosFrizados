@@ -26,8 +26,8 @@ public class BuenosFrizadosDbContext : DbContext {
         modelBuilder.Entity<Order>(entity =>
         {
             entity.Property(e => e.ClientPhoneNumber).HasColumnType("varchar(50)");
-            entity.Property(e => e.TotalAmount).HasPrecision(18, 2);
             entity.Property(e => e.OrderDate).HasColumnType("timestamp with time zone");
+            // Total is a computed property, no need to configure it
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
