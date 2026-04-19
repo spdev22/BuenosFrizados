@@ -9,7 +9,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, cartItems, onAdd }: ProductCardProps) {
     const [isAdded, setIsAdded] = useState(false)
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const timeoutRef = useRef<number | null>(null)
 
     const currentQuantity = cartItems.find(item => item.productId === product.id)?.quantity || 0
 
