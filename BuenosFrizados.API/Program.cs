@@ -1,6 +1,7 @@
 using BuenosFrizados.Application.Services;
 using BuenosFrizados.Infrastructure.Data;
 using BuenosFrizados.Infrastructure.Repositories;
+using BuenosFrizados.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using FluentValidation.AspNetCore;
