@@ -104,10 +104,11 @@ builder.Services.AddCors(options =>
         }
         else
         {
-            // Production - allow Railway frontend and local testing
+            // Production - allow Vercel frontend, Railway frontend and local testing
             policy.WithOrigins(
                     "http://localhost:5173",
-                    "https://buenosfrizados-production.up.railway.app"
+                    "https://buenosfrizados-production.up.railway.app",
+                    "https://buenos-frizados.vercel.app"
                   )
                   .AllowAnyMethod()
                   .AllowAnyHeader();
