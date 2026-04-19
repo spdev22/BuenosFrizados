@@ -78,7 +78,7 @@ export default function MenuPage({ cartItems, onAdd }: MenuPageProps) {
 
             {/* Fallback si no hay productos categorizados */}
             {productos.length === 0 && combos.length === 0 && products.length > 0 && (
-                <ProductList products={products} onAdd={onAdd} />
+                <ProductList products={products} cartItems={cartItems} onAdd={onAdd} />
             )}
 
             {/* Mensaje si no hay productos */}
