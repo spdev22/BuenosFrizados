@@ -29,7 +29,17 @@ if (!string.IsNullOrEmpty(databaseUrl))
 {
     Console.WriteLine($"DATABASE_URL starts with 'postgres://': {databaseUrl.StartsWith("postgres://")}");
     Console.WriteLine($"DATABASE_URL starts with 'postgresql://': {databaseUrl.StartsWith("postgresql://")}");
-    Console.WriteLine($"DATABASE_URL (first 30 chars): {databaseUrl.Substring(0, Math.Min(30, databaseUrl.Length))}...");
+    Console.WriteLine($"DATABASE_URL (first 50 chars): {databaseUrl.Substring(0, Math.Min(50, databaseUrl.Length))}...");
+    
+    // Parse and log database name
+    try {
+        var uri = new Uri(databaseUrl);
+        Console.WriteLine($"Parsed database name: '{uri.LocalPath.Trim('/')}'");
+        Console.WriteLine($"Parsed host: '{uri.Host}'");
+        Console.WriteLine($"Parsed port: '{uri.Port}'");
+    } catch (Exception ex) {
+        Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
+    }
 }
 Console.WriteLine($"PGHOST: {pgHost ?? "NOT SET"}");
 Console.WriteLine($"PGUSER: {pgUser ?? "NOT SET"}"); 
