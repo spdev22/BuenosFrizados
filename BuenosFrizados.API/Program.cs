@@ -32,20 +32,30 @@ Console.WriteLine($"=== END DEBUG ===");
 
 string? connectionString = null;
 
-// Try Railway PostgreSQL environment variables first
-if (!string.IsNullOrEmpty(pgHost) && !string.IsNullOrEmpty(pgUser) && 
+// Try DATABASE_URL format FIRST (Railway uses this)
+if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgres://"))
+{
+    try
+    {
+        var databaseUri = new Uri(databaseUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+        connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.LocalPath.Trim('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+        Console.WriteLine("Using PostgreSQL with DATABASE_URL from Railway");
+        Console.WriteLine($"Connecting to PostgreSQL on {databaseUri.Host}:{databaseUri.Port}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
+        connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        Console.WriteLine("Falling back to SQL Server");
+    }
+}
+// Try separate PostgreSQL environment variables
+else if (!string.IsNullOrEmpty(pgHost) && !string.IsNullOrEmpty(pgUser) && 
     !string.IsNullOrEmpty(pgPassword) && !string.IsNullOrEmpty(pgDatabase))
 {
     connectionString = $"Host={pgHost};Port={pgPort ?? "5432"};Database={pgDatabase};Username={pgUser};Password={pgPassword};SSL Mode=Require;Trust Server Certificate=true";
     Console.WriteLine("Using PostgreSQL with separate environment variables");
-}
-// Try DATABASE_URL format
-else if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgres://"))
-{
-    var databaseUri = new Uri(databaseUrl);
-    var userInfo = databaseUri.UserInfo.Split(':');
-    connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.LocalPath.Trim('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
-    Console.WriteLine("Using PostgreSQL with DATABASE_URL");
 }
 else
 {
