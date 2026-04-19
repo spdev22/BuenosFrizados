@@ -56,7 +56,16 @@ if (!string.IsNullOrEmpty(databaseUrl) && (databaseUrl.StartsWith("postgres://")
     {
         var databaseUri = new Uri(databaseUrl);
         var userInfo = databaseUri.UserInfo.Split(':');
-        connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.LocalPath.Trim('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+        
+        // Railway often has incorrect database name in URL, use 'postgres' as default
+        var databaseName = databaseUri.LocalPath.Trim('/');
+        if (databaseName == "railway" || string.IsNullOrEmpty(databaseName))
+        {
+            databaseName = "postgres";
+            Console.WriteLine("Using 'postgres' as database name instead of 'railway'");
+        }
+        
+        connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseName};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
         Console.WriteLine("Using PostgreSQL with DATABASE_URL from Railway");
         Console.WriteLine($"Connecting to PostgreSQL on {databaseUri.Host}:{databaseUri.Port}");
     }
