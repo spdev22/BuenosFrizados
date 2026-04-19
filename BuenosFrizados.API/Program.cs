@@ -21,7 +21,7 @@ var pgPassword = Environment.GetEnvironmentVariable("PGPASSWORD");
 var pgDatabase = Environment.GetEnvironmentVariable("PGDATABASE");
 var pgPort = Environment.GetEnvironmentVariable("PGPORT");
 
-Console.WriteLine($"=== DATABASE DEBUG ===");
+Console.WriteLine($"=== DATABASE DEBUG (Railway PostgreSQL) ===");
 Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
 Console.WriteLine($"DATABASE_URL: {(string.IsNullOrEmpty(databaseUrl) ? "NOT SET" : "SET")}");
 Console.WriteLine($"PGHOST: {pgHost ?? "NOT SET"}");
