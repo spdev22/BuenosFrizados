@@ -17,9 +17,25 @@ var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 var connectionString = databaseUrl ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Log connection details for debugging
-Console.WriteLine($"DATABASE_URL: {(string.IsNullOrEmpty(databaseUrl) ? "Not set" : "Set")}");
-Console.WriteLine($"Connection string starts with postgres://: {connectionString?.StartsWith("postgres://") == true}");
+Console.WriteLine($"=== DATABASE CONFIGURATION DEBUG ===");
 Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"DATABASE_URL variable: {(string.IsNullOrEmpty(databaseUrl) ? "NOT SET" : "SET")}");
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    Console.WriteLine($"DATABASE_URL starts with postgres://: {databaseUrl.StartsWith("postgres://")}");
+    Console.WriteLine($"DATABASE_URL (first 20 chars): {databaseUrl.Substring(0, Math.Min(20, databaseUrl.Length))}...");
+}
+Console.WriteLine($"Final connection string starts with postgres://: {connectionString?.StartsWith("postgres://") == true}");
+Console.WriteLine($"All Environment Variables:");
+foreach (DictionaryEntry env in Environment.GetEnvironmentVariables())
+{
+    var key = env.Key.ToString();
+    if (key.Contains("DATABASE") || key.Contains("POSTGRES") || key.Contains("DB"))
+    {
+        Console.WriteLine($"  {key}: {env.Value}");
+    }
+}
+Console.WriteLine($"=== END DEBUG ===");
 
 builder.Services.AddDbContext<BuenosFrizadosDbContext>(options =>
 {
