@@ -24,6 +24,12 @@ var pgPort = Environment.GetEnvironmentVariable("PGPORT");
 Console.WriteLine($"=== DATABASE DEBUG (Railway PostgreSQL) ===");
 Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
 Console.WriteLine($"DATABASE_URL: {(string.IsNullOrEmpty(databaseUrl) ? "NOT SET" : "SET")}");
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    Console.WriteLine($"DATABASE_URL starts with 'postgres://': {databaseUrl.StartsWith("postgres://")}");
+    Console.WriteLine($"DATABASE_URL starts with 'postgresql://': {databaseUrl.StartsWith("postgresql://")}");
+    Console.WriteLine($"DATABASE_URL (first 30 chars): {databaseUrl.Substring(0, Math.Min(30, databaseUrl.Length))}...");
+}
 Console.WriteLine($"PGHOST: {pgHost ?? "NOT SET"}");
 Console.WriteLine($"PGUSER: {pgUser ?? "NOT SET"}"); 
 Console.WriteLine($"PGDATABASE: {pgDatabase ?? "NOT SET"}");
@@ -33,7 +39,7 @@ Console.WriteLine($"=== END DEBUG ===");
 string? connectionString = null;
 
 // Try DATABASE_URL format FIRST (Railway uses this)
-if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("postgres://"))
+if (!string.IsNullOrEmpty(databaseUrl) && (databaseUrl.StartsWith("postgres://") || databaseUrl.StartsWith("postgresql://")))
 {
     try
     {
