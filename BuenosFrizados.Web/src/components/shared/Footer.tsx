@@ -9,9 +9,12 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-bold text-orange-400 mb-4">Buenos Frizados</h3>
             <p className="text-gray-300 leading-relaxed">
-              Especialistas en comida casera y frizadas artesanales.
-              Ofrecemos productos frescos y de calidad, preparados con amor
+              Especialistas en frizados artesanales congelados.
+              Ofrecemos productos precocidos o crudos de calidad, listos para freír en casa
               para brindarte la mejor experiencia culinaria.
+            </p>
+            <p className="text-sm text-orange-300 mt-3 font-medium">
+              ❄️ Todos nuestros productos son congelados crudos o precocidos.
             </p>
           </div>
 

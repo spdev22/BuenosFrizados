@@ -10,7 +10,7 @@ export default function Navbar({ cartCount }: NavbarProps) {
     const isActive = (path: string) => location.pathname === path
 
     return (
-        <nav className="bg-[#1a1a1a] border-b border-[#2a2a2a] px-6 py-4 flex items-center justify-between">
+        <nav className="bg-[#1a1a1a]/40 backdrop-blur-sm border-b border-[#2a2a2a]/40 px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
                 <div className="w-1 h-10 bg-[#FF6B00] rounded-full" />
                 <div>
@@ -22,14 +22,14 @@ export default function Navbar({ cartCount }: NavbarProps) {
             <div className="flex gap-2">
                 <button
                     onClick={() => navigate('/menu')}
-                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/menu') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
+                    className={`px-4 py-2 rounded-lg text-sm transition-colors cursor-pointer ${isActive('/menu') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
                         }`}
                 >
                     Menú
                 </button>
                 <button
                     onClick={() => navigate('/order')}
-                    className={`px-4 py-2 rounded-lg text-sm transition-colors ${isActive('/order') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
+                    className={`px-4 py-2 rounded-lg text-sm transition-colors cursor-pointer ${isActive('/order') ? 'bg-[#FF6B00] text-white' : 'text-[rgba(255,255,255,0.45)] hover:bg-[rgba(255,255,255,0.06)] hover:text-white'
                         }`}
                 >
                     Pedido {cartCount > 0 && `(${cartCount})`}
