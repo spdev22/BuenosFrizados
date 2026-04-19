@@ -137,14 +137,36 @@ if (!app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<BuenosFrizadosDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    
     try
     {
-        context.Database.Migrate();
+        // For PostgreSQL migration issues, recreate database
+        if (connectionString != null && connectionString.Contains("Host="))
+        {
+            Console.WriteLine("PostgreSQL detected - recreating database schema");
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+            
+            // Add sample data
+            if (!context.Products.Any())
+            {
+                context.Products.AddRange(
+                    new Product { Name = "Empanadas (x12)", Description = "Deliciosas empanadas caseras", Price = 8500, ImageUrl = "https://example.com/empanadas.jpg", IsActive = true, Stock = 100 },
+                    new Product { Name = "Bastones de Muzzarella", Description = "Ricos bastones hechos con la muzzarella mas rica de todas", Price = 4500, ImageUrl = "https://webdato.com/services/qr/desnivel/carta/wp-content/uploads/2023/04/bastoncitos-de-muzarrella.jpg", IsActive = true, Stock = 50 }
+                );
+                context.SaveChanges();
+                Console.WriteLine("Sample data added to PostgreSQL database");
+            }
+        }
+        else
+        {
+            context.Database.Migrate();
+        }
     }
     catch (Exception ex)
     {
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating the database");
+        logger.LogError(ex, "An error occurred while setting up the database");
     }
 }
 
