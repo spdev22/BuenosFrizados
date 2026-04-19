@@ -144,14 +144,14 @@ export default function AdminPage() {
                 <div className="flex gap-1 bg-[#1a1a1a]/80 backdrop-blur-sm rounded-2xl p-1 border border-[#2a2a2a]/60 shadow-xl">
                     <button
                         onClick={() => setActiveTab('orders')}
-                        className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'orders' ? 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white shadow-md' : 'text-gray-400 hover:text-white'
+                        className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${activeTab === 'orders' ? 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white shadow-md' : 'text-gray-400 hover:text-white'
                             }`}
                     >
                         Pedidos
                     </button>
                     <button
                         onClick={() => setActiveTab('products')}
-                        className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'products' ? 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white shadow-md' : 'text-gray-400 hover:text-white'
+                        className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${activeTab === 'products' ? 'bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white shadow-md' : 'text-gray-400 hover:text-white'
                             }`}
                     >
                         Productos
@@ -161,14 +161,14 @@ export default function AdminPage() {
                     {activeTab === 'products' && !showForm && !editingProduct && (
                         <button
                             onClick={() => setShowForm(true)}
-                            className="px-5 py-2.5 bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white rounded-xl text-sm font-semibold hover:from-[#FF5500] hover:to-[#FF6B00] transition-all duration-200 shadow-lg hover:shadow-xl"
+                            className="px-5 py-2.5 bg-gradient-to-r from-[#FF6B00] to-[#FF8533] text-white rounded-xl text-sm font-semibold hover:from-[#FF5500] hover:to-[#FF6B00] transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer"
                         >
                             + Nuevo producto
                         </button>
                     )}
                     <button
                         onClick={logout}
-                        className="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl text-sm font-medium hover:bg-red-500/30 hover:text-red-300 transition-colors"
+                        className="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl text-sm font-medium hover:bg-red-500/30 hover:text-red-300 transition-colors cursor-pointer"
                     >
                         Cerrar Sesión
                     </button>

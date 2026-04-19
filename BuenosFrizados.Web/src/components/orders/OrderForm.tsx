@@ -9,11 +9,13 @@ import { FaWhatsapp } from 'react-icons/fa'
 interface OrderFormProps {
     items: OrderItem[]
     onRemove: (productId: number) => void
+    onIncreaseQuantity: (productId: number) => void
+    onDecreaseQuantity: (productId: number) => void
     onSubmit: (order: CreateOrderRequest) => void
     onError: (message: string) => void
 }
 
-export default function OrderForm({ items, onRemove, onSubmit }: OrderFormProps) {
+export default function OrderForm({ items, onRemove, onIncreaseQuantity, onDecreaseQuantity, onSubmit }: OrderFormProps) {
     const [clientName, setClientName] = useState('')
     const [clientPhoneNumber, setClientPhoneNumber] = useState('')
     const [deliveryAddress, setDeliveryAddress] = useState('')
@@ -94,7 +96,7 @@ export default function OrderForm({ items, onRemove, onSubmit }: OrderFormProps)
             <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-2xl p-6 shadow-xl">
 
                 {items.map(item => (
-                    <OrderItemComponent key={item.productId} item={item} onRemove={onRemove} />
+                    <OrderItemComponent key={item.productId} item={item} onRemove={onRemove} onIncreaseQuantity={onIncreaseQuantity} onDecreaseQuantity={onDecreaseQuantity} />
                 ))}
                 <div className="flex justify-between pt-4 mt-4 border-t border-[#2a2a2a] font-semibold text-lg">
                     <span className="text-gray-300">Total</span>

@@ -6,7 +6,7 @@ import ProductCard from '../components/products/ProductCard'
 import PageHeader from '../components/shared/PageHeader'
 
 interface MenuPageProps {
-    cartItems: Array<{productId: number, quantity: number}>
+    cartItems: Array<{ productId: number, quantity: number }>
     onAdd: (product: Product) => void
 }
 
@@ -46,7 +46,7 @@ export default function MenuPage({ cartItems, onAdd }: MenuPageProps) {
 
     return (
         <div>
-            <PageHeader title="Nuestros Frizados" subtitle="Artesanal, fresco, cuidado" />
+            <PageHeader title="Nuestros Frizados" subtitle="Artesanal - Fresco - Cuidado" />
 
             {/* Sección Productos */}
             {productos.length > 0 && (

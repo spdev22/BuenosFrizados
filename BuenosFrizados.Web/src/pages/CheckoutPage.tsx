@@ -10,10 +10,12 @@ import PageHeader from '../components/shared/PageHeader'
 interface CheckoutPageProps {
     items: OrderItem[]
     onRemove: (productId: number) => void
+    onIncreaseQuantity: (productId: number) => void
+    onDecreaseQuantity: (productId: number) => void
     onClearCart: () => void
 }
 
-export default function CheckoutPage({ items, onRemove, onClearCart }: CheckoutPageProps) {
+export default function CheckoutPage({ items, onRemove, onIncreaseQuantity, onDecreaseQuantity, onClearCart }: CheckoutPageProps) {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
     const { toast, showToast, hideToast } = useToast()
@@ -45,7 +47,7 @@ export default function CheckoutPage({ items, onRemove, onClearCart }: CheckoutP
                     <p className="text-gray-400 mt-4">Realizando tu pedido...</p>
                 </div>
                 : <>
-                    <OrderForm items={items} onRemove={onRemove} onSubmit={handleSubmit} onError={(message) => showToast(message, 'error')} />
+                    <OrderForm items={items} onRemove={onRemove} onIncreaseQuantity={onIncreaseQuantity} onDecreaseQuantity={onDecreaseQuantity} onSubmit={handleSubmit} onError={(message) => showToast(message, 'error')} />
 
                     {/* Delivery Information Notice */}
                     <div className="mt-6 p-4 bg-orange-500/10 backdrop-blur-sm rounded-lg border border-orange-500/20">

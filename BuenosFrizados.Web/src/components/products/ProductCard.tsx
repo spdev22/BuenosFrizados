@@ -1,22 +1,27 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { Product } from '../../types'
 
 interface ProductCardProps {
     product: Product
-    cartItems: Array<{productId: number, quantity: number}>
+    cartItems: Array<{ productId: number, quantity: number }>
     onAdd: (product: Product, quantity?: number) => void
 }
 
 export default function ProductCard({ product, cartItems, onAdd }: ProductCardProps) {
     const [isAdded, setIsAdded] = useState(false)
-    
+    const timeoutRef = useRef(null)
+
     const currentQuantity = cartItems.find(item => item.productId === product.id)?.quantity || 0
 
     const handleAdd = () => {
         onAdd(product, 1)
         setIsAdded(true)
-        setTimeout(() => setIsAdded(false), 1500) // Reset after 1.5 seconds
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => setIsAdded(false), 1500)
     }
+
 
     return (
         <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border border-[#2a2a2a]/80 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-[#FF6B00]/25 transition-all duration-300 hover:-translate-y-2">
@@ -29,7 +34,7 @@ export default function ProductCard({ product, cartItems, onAdd }: ProductCardPr
                 {isAdded && (
                     <div className="absolute inset-0 bg-[#FF6B35]/20 backdrop-blur-sm flex items-center justify-center">
                         <div className="bg-[#FF6B35]/90 text-white px-4 py-2 rounded-full text-sm font-semibold animate-pulse">
-                            ✓ Agregado ({currentQuantity + 1})
+                            ✓ Agregado {currentQuantity > 1 ? '(' + currentQuantity + ')' : ''}
                         </div>
                     </div>
                 )}
@@ -48,17 +53,15 @@ export default function ProductCard({ product, cartItems, onAdd }: ProductCardPr
                     <span className="font-cabinet font-light text-3xl text-[#FF6B35] tracking-wide">
                         ${product.price.toLocaleString('es-AR')}
                     </span>
-                    <p className="text-xs text-gray-500 mt-2">Precio sin impuestos nacionales</p>
                 </div>
                 <button
                     onClick={handleAdd}
-                    disabled={isAdded}
                     className={`w-full py-3 px-6 text-base font-medium rounded-full border-2 transition-all duration-200 shadow-lg hover:shadow-xl ${isAdded
-                        ? 'bg-[#FF6B35] border-[#FF6B35] text-white scale-105 cursor-not-allowed'
+                        ? 'bg-[#FF6B35] border-[#FF6B35] text-white scale-105 cursor-pointer'
                         : 'bg-transparent border-[#FF6B35] text-[#FF6B35] hover:bg-gradient-to-r hover:from-[#FF6B00] hover:to-[#FF8533] hover:text-white hover:border-transparent cursor-pointer'
                         }`}
                 >
-                    {isAdded ? '✓ ¡Agregado!' : 'Agregar'}
+                    Agregar
                 </button>
             </div>
         </div>
