@@ -4,7 +4,8 @@ WORKDIR /src
 
 # Copy project files
 COPY ["BuenosFrizados.API/BuenosFrizados.API.csproj", "BuenosFrizados.API/"]
-COPY ["BuenosFrizados.Core/BuenosFrizados.Core.csproj", "BuenosFrizados.Core/"]
+COPY ["BuenosFrizados.Domain/BuenosFrizados.Domain.csproj", "BuenosFrizados.Domain/"]
+COPY ["BuenosFrizados.Application/BuenosFrizados.Application.csproj", "BuenosFrizados.Application/"]
 COPY ["BuenosFrizados.Infrastructure/BuenosFrizados.Infrastructure.csproj", "BuenosFrizados.Infrastructure/"]
 
 # Restore dependencies
