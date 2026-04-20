@@ -150,6 +150,14 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors("AllowFrontend");
 
+// Add request logging for debugging
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Incoming request: {context.Request.Method} {context.Request.Path}");
+    await next();
+    Console.WriteLine($"Response status: {context.Response.StatusCode}");
+});
+
 app.UseAuthorization();
 app.MapControllers();
 
