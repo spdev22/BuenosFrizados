@@ -162,11 +162,22 @@ if (!app.Environment.IsDevelopment())
     
     try
     {
+        Console.WriteLine($"Database migration - connectionString contains Host=: {connectionString?.Contains("Host=")}");
+        Console.WriteLine($"Production environment: {!app.Environment.IsDevelopment()}");
+        
         // For PostgreSQL migration issues, recreate database
         if (connectionString != null && connectionString.Contains("Host="))
         {
             Console.WriteLine("PostgreSQL detected - recreating database schema");
-            context.Database.EnsureDeleted();
+            
+            // Drop existing tables if they exist (safer than dropping entire database)
+            Console.WriteLine("Dropping existing tables if they exist...");
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"OrderItems\" CASCADE");
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Orders\" CASCADE");  
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Products\" CASCADE");
+            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE");
+            
+            Console.WriteLine("Creating new database schema...");
             context.Database.EnsureCreated();
             
             // Add sample data
