@@ -161,7 +161,7 @@ app.Use(async (context, next) =>
 app.UseAuthorization();
 app.MapControllers();
 
-// Ensure database is created and migrated in production
+// Configure database BEFORE starting the app
 if (!app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
@@ -170,27 +170,25 @@ if (!app.Environment.IsDevelopment())
     
     try
     {
-        Console.WriteLine($"Database migration - connectionString contains Host=: {connectionString?.Contains("Host=")}");
-        Console.WriteLine($"Production environment: {!app.Environment.IsDevelopment()}");
+        Console.WriteLine("Configuring database in production...");
         
-        // For PostgreSQL migration issues, recreate database
         if (connectionString != null && connectionString.Contains("Host="))
         {
-            Console.WriteLine("PostgreSQL detected - recreating database schema");
+            Console.WriteLine("PostgreSQL detected - ensuring schema exists");
             
-            // Drop existing tables if they exist (safer than dropping entire database)
-            Console.WriteLine("Dropping existing tables if they exist...");
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"OrderItems\" CASCADE");
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Orders\" CASCADE");  
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"Products\" CASCADE");
-            context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\" CASCADE");
-            
-            Console.WriteLine("Creating new database schema...");
-            context.Database.EnsureCreated();
-            
-            // Add sample data
-            if (!context.Products.Any())
+            // Only create if database/tables don't exist
+            var tablesExist = false;
+            try 
             {
+                tablesExist = context.Products.Any();
+                Console.WriteLine("Database tables already exist, skipping creation");
+            }
+            catch
+            {
+                Console.WriteLine("Database tables don't exist, creating schema...");
+                context.Database.EnsureCreated();
+                
+                // Add sample data
                 context.Products.AddRange(
                     new Product { Name = "Empanadas (x12)", Description = "Deliciosas empanadas caseras", Price = 8500, ImageUrl = "https://example.com/empanadas.jpg", IsActive = true, Stock = 100 },
                     new Product { Name = "Bastones de Muzzarella", Description = "Ricos bastones hechos con la muzzarella mas rica de todas", Price = 4500, ImageUrl = "https://webdato.com/services/qr/desnivel/carta/wp-content/uploads/2023/04/bastoncitos-de-muzarrella.jpg", IsActive = true, Stock = 50 }
@@ -203,6 +201,8 @@ if (!app.Environment.IsDevelopment())
         {
             context.Database.Migrate();
         }
+        
+        Console.WriteLine("Database configuration completed successfully");
     }
     catch (Exception ex)
     {
@@ -210,4 +210,5 @@ if (!app.Environment.IsDevelopment())
     }
 }
 
+Console.WriteLine("Starting web application...");
 app.Run();
